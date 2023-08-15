@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <string>
+#include <memory>
+#include <ArduinoWebsockets.h>
 
 class Legend {
     public:
@@ -11,11 +13,14 @@ class Legend {
         void disableConfiguration();
         void setDefaultPassword(std::string& password);
         void setDefaultSSID(std::string& ssid);
+        void run();
 
 
     private:
-        std::string ssid {""};
-        std::string password {""};
+        std::string ssid_ {""};
+        std::string password_ {""};
+        std::unique_ptr<websockets::WebsocketsClient> client_ {};
+
 
 
 };
