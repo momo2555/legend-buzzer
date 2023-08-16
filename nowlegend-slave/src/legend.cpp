@@ -1,7 +1,6 @@
 #include "legend.h"
 
 Legend::Legend() {
-    this->client_ = std::make_unique<websockets::WebsocketsClient>();
 }
 void Legend::enableConfiguration() {
 

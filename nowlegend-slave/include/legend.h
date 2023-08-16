@@ -4,7 +4,6 @@
 #include <iostream>
 #include <string>
 #include <memory>
-#include <ArduinoWebsockets.h>
 
 class Legend {
     public:
@@ -19,7 +18,7 @@ class Legend {
     private:
         std::string ssid_ {""};
         std::string password_ {""};
-        std::unique_ptr<websockets::WebsocketsClient> client_ {};
+       
 
 
 

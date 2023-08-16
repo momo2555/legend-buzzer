@@ -1,81 +1,82 @@
 #include "request.h"
-#include <memory>
 
 Request::Request() {
 
 }
 void Request::setReceiver(Entity receiver) {
-    header_.to = receiver;
+    requestBody_.header.to = receiver;
 }
 void Request::setSender(Entity sender) {
-    header_.from = sender;
+    requestBody_.header.from = sender;
 }
-void Request::setDeviceName(std::string name) {
-    header_.device = name;
+void Request::setDeviceName(const char* name) {
+    strncpy(requestBody_.header.device, name, STR_DEVICE_LEN);
+    //header_.device = name;
 }
-void Request::setMacAddress(std::string macAddress) {
-    header_.mac = macAddress;
-    
+void Request::setMacAddress(const char* macAddress) {
+    strncpy(requestBody_.header.mac, macAddress, STR_MAC_LEN);
+    //header_.mac = macAddress;
 }
 
 /*
     A request of type event
 */
-void Request::asEvent(std::string eventName) {
-    header_.type = RequestType::DEVICE_EVENT;
-    event_ = eventName;
+void Request::asEvent(const char* eventName) {
+    requestBody_.header.type = RequestType::DEVICE_EVENT;
+    strncpy(requestBody_.event, eventName, STR_EVENT_LEN);
+    
 }
 
 /*
     request of type data
 */
 void Request::asData() {
-    header_.type = RequestType::DEVICE_EVENT;
+    requestBody_.header.type = RequestType::DEVICE_DATA;
 }
 void Request::setData(std::string name, std::string data) {
-    RequestData dataStored {};
-    dataStored.type = RequestDataType::STRING;
-    dataStored.stringValue = data;
-    data_[name] = dataStored;
+    #ifdef STRING_DATA
+        RequestData dataStored {};
+        dataStored.type = RequestDataType::STRING;
+        dataStored.stringValue = data;
+        requestBody_.data[name] = dataStored;
+    #endif
 }
 void Request::setData(std::string name, int data) {
     RequestData dataStored {};
     dataStored.type = RequestDataType::INT;
     dataStored.intValue = data;
-    data_[name] = dataStored;
+    requestBody_.data[name] = dataStored;
 }
 void Request::setData(std::string name, bool data) {
     RequestData dataStored {};
     dataStored.type = RequestDataType::BOOL;
     dataStored.boolValue = data;
-    data_[name] = dataStored;
+    requestBody_.data[name] = dataStored;
+    requestBody_.data.
 }
 void Request::setData(std::string name, float data) {
     RequestData dataStored {};
     dataStored.type = RequestDataType::FLOAT;
     dataStored.floatValue = data;
-    data_[name] = dataStored;
+    requestBody_.data[name] = dataStored;
 }
 
 std::string Request::toString() {
     
     ArduinoJson::DynamicJsonDocument doc(1024);
-    doc["header"]["from"] = entityToString_(header_.from);
-    doc["header"]["to"] = entityToString_(header_.to);
-    doc["header"]["type"] = typeToString_(header_.type);
-    doc["header"]["mac"] = header_.mac;
-    if(header_.type == RequestType::DEVICE_EVENT) {
-        doc["event"] = event_;
+    doc["header"]["from"] = entityToString_(requestBody_.header.from);
+    doc["header"]["to"] = entityToString_(requestBody_.header.to);
+    doc["header"]["type"] = typeToString_(requestBody_.header.type);
+    doc["header"]["mac"] = requestBody_.header.mac;
+    if(requestBody_.header.type == RequestType::DEVICE_EVENT) {
+        doc["event"] = std::string(requestBody_.event);
         
-    }else if (header_.type == RequestType::DEVICE_EVENT) {
-        for (auto it = data_.begin(); it!=data_.end();it++) {
+    }else if (requestBody_.header.type == RequestType::DEVICE_DATA) {
+        for (auto it = requestBody_.data.begin(); it!=requestBody_.data.end();it++) {
             
             switch(it->second.type) {
                 case RequestDataType::INT:
                     doc["data"][it->first] = it->second.intValue;
-                    break;
-                case RequestDataType::STRING:
-                    doc["data"][it->first] = it->second.stringValue;
                     break;
                 case RequestDataType::BOOL:
                     doc["data"][it->first] = it->second.boolValue;
@@ -83,6 +84,12 @@ std::string Request::toString() {
                 case RequestDataType::FLOAT:
                     doc["data"][it->first] = it->second.floatValue;
                     break;
+                
+                #ifdef STRING_DATA
+                case RequestDataType::STRING:
+                    doc["data"][it->first] = it->second.stringValue;
+                    break;
+                #endif
                 
             }
             
@@ -121,4 +128,8 @@ std::string Request::typeToString_(RequestType type) {
             break;
     }
     return typeString;
+}
+
+RequestBody Request::getRequestBody() {
+    return requestBody_;
 }
