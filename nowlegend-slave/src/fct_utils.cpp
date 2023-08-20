@@ -1,3 +1,21 @@
+#include "fct_utils.h"
+
+std::string str_toupper(std::string s)
+{
+    std::transform(s.begin(), s.end(), s.begin(), 
+                // static_cast<int(*)(int)>(std::toupper)         // wrong
+                // [](int c){ return std::toupper(c); }           // wrong
+                // [](char c){ return std::toupper(c); }          // wrong
+                   [](unsigned char c){ return std::toupper(c); } // correct
+                  );
+    return s;
+}
+
+std::string intToHexStr(uint8_t value) {
+    std::stringstream stream;
+    stream << std::hex << value;
+    return str_toupper(stream.str());
+}
 
 /**
  * Transform a String mac address to a int array
@@ -32,7 +50,7 @@ void macAddressToIntArray(char addr[], uint8_t output[]) {
   }
 
 }
-void macAddressToIntArray(String addr, uint8_t output[]) {
+void macAddressToIntArray(std::string addr, uint8_t output[]) {
     uint8_t i = 0, j = 0, value = 0;
     for(char s: addr) {
         if(s!=':') {
@@ -48,11 +66,10 @@ void macAddressToIntArray(String addr, uint8_t output[]) {
     }
 
 }
-String IntArrayToMacAddress(uint8_t input[]) {
-    String result = "";
+std::string IntArrayToMacAddress(uint8_t input[]) {
+    std::string result = "";
     for(uint8_t i = 0;i<6;i++) {
-        String value = String(input[i], HEX);
-        value.toUpperCase();
+        std::string value = intToHexStr(input[i]);
         if(value.length()==1)value="0"+value;
         if(i<5)value = value + ":";
         result=result+value;
@@ -69,9 +86,5 @@ bool compareAddresses(uint8_t addr1[], uint8_t addr2[]) {
   }
   return result;
 }
-double constrainAngle(double x){
-    x = fmod(x + PI,2*PI);
-    if (x < 0)
-        x += 2*PI;
-    return x - PI;
-}
+
+

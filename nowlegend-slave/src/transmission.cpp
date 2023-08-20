@@ -1,19 +1,24 @@
-#include "com.h"
+#include "transmission.h"
+
+void receiveCallbackWrapper(const unsigned char* a, const unsigned char* b, int c) {
+  receiveCallback(a, b, c);
+}
+void setReceiveCallback(ReceiveCallback cb) {
+  receiveCallback = cb;
+}
+
 
 Transmission::Transmission() {
   
 }
-void Transmission::registerPeer(String address){
-  char charAddress[20];
+void Transmission::registerPeer(std::string address){
   uint8_t intAddress[6];
-  address.toCharArray(charAddress, 20);
-
-  macAddressToIntArray(charAddress, intAddress);
+  macAddressToIntArray(address.c_str(), intAddress);
   registerPeer(intAddress);
 }
 void Transmission::registerPeer(uint8_t address[]) {
   //check if the address is in the peers list
-  if(!esp_now_is_peer_exist(address)) {
+  if(!esp_now_is_peer_exist(address) && peerIndex<MAX_CONNECTION) {
     // Register peer
     esp_now_peer_info_t peerInfo = {};
     //peerInfo.ifidx=WIFI_IF_AP;
@@ -32,6 +37,14 @@ void Transmission::registerPeer(uint8_t address[]) {
   }
   
 }
+void Transmission::registerEchoPeer() {
+  uint8_t echoBroadAddr[6] ECHO_BROADCAST_ADDR;
+  registerPeer(echoBroadAddr);
+}
+void Transmission::deleteEchoPeer() {
+  uint8_t echoBroadAddr[6] ECHO_BROADCAST_ADDR;
+  deletePeer(echoBroadAddr);
+}
 void Transmission::deletePeer(uint8_t address[]) {
   uint8_t newPeerIndex = peerIndex;
     for(uint8_t i = 0;i<newPeerIndex;i++) {
@@ -45,12 +58,12 @@ void Transmission::deletePeer(uint8_t address[]) {
             newPeerIndex--;
             //delete peer from peer list
             esp_now_del_peer(address);
-            setWithholding(address, false);
+          
         }
     }
     peerIndex=newPeerIndex;
 }
-void Transmission::deletePeer(String address) {
+void Transmission::deletePeer(std::string address) {
   uint8_t intAddress[6];
   macAddressToIntArray(address, intAddress);
   deletePeer(intAddress);
@@ -58,8 +71,7 @@ void Transmission::deletePeer(String address) {
 void Transmission::initTransmission() {
   
   WiFi.mode(WIFI_STA);
-  myStrAddress = WiFi.macAddress();
-  Serial.println(myStrAddress);
+  myStrAddress = std::string(WiFi.macAddress().c_str());
   //write the mac address in right format (int tab)
   macAddressToIntArray(myStrAddress, myAdress);
   
@@ -123,15 +135,5 @@ void Transmission::sendModules(FieldTransmission modules){
 void Transmission::OnDataSent(void (*callBack)(const unsigned char*, esp_now_send_status_t)){
   esp_now_register_send_cb(*callBack);
 }
-void Transmission::OnDataRecv(void (*callBack)(const unsigned char*, const unsigned char*, int)){
-  esp_now_register_recv_cb(*callBack);
-}
 
 
-
-
-void Transmission::setup(RobotData robotData) {
-  #ifdef TARGET_X86
-    WiFi.setup(robotData);
-  #endif
-}

@@ -13,9 +13,8 @@ void Request::setDeviceName(const char* name) {
     strncpy(requestBody_.header.device, name, STR_DEVICE_LEN);
     //header_.device = name;
 }
-void Request::setMacAddress(const char* macAddress) {
-    strncpy(requestBody_.header.mac, macAddress, STR_MAC_LEN);
-    //header_.mac = macAddress;
+void Request::setMacAddress(std::array<uint8_t, STR_MAC_LEN> macAddress) {
+    requestBody_.header.mac = macAddress;
 }
 
 /*
@@ -33,33 +32,8 @@ void Request::asEvent(const char* eventName) {
 void Request::asData() {
     requestBody_.header.type = RequestType::DEVICE_DATA;
 }
-void Request::setData(std::string name, std::string data) {
-    #ifdef STRING_DATA
-        RequestData dataStored {};
-        dataStored.type = RequestDataType::STRING;
-        dataStored.stringValue = data;
-        requestBody_.data[name] = dataStored;
-    #endif
-}
-void Request::setData(std::string name, int data) {
-    RequestData dataStored {};
-    dataStored.type = RequestDataType::INT;
-    dataStored.intValue = data;
-    requestBody_.data[name] = dataStored;
-}
-void Request::setData(std::string name, bool data) {
-    RequestData dataStored {};
-    dataStored.type = RequestDataType::BOOL;
-    dataStored.boolValue = data;
-    requestBody_.data[name] = dataStored;
-    requestBody_.data.
-}
-void Request::setData(std::string name, float data) {
-    RequestData dataStored {};
-    dataStored.type = RequestDataType::FLOAT;
-    dataStored.floatValue = data;
-    requestBody_.data[name] = dataStored;
-}
+
+
 
 std::string Request::toString() {
     
@@ -67,31 +41,26 @@ std::string Request::toString() {
     doc["header"]["from"] = entityToString_(requestBody_.header.from);
     doc["header"]["to"] = entityToString_(requestBody_.header.to);
     doc["header"]["type"] = typeToString_(requestBody_.header.type);
-    doc["header"]["mac"] = requestBody_.header.mac;
+    //doc["header"]["mac"] = requestBody_.header.mac;
     if(requestBody_.header.type == RequestType::DEVICE_EVENT) {
         doc["event"] = std::string(requestBody_.event);
         
     }else if (requestBody_.header.type == RequestType::DEVICE_DATA) {
         for (auto it = requestBody_.data.begin(); it!=requestBody_.data.end();it++) {
-            
-            switch(it->second.type) {
+            switch (it->second.type) {
                 case RequestDataType::INT:
-                    doc["data"][it->first] = it->second.intValue;
-                    break;
-                case RequestDataType::BOOL:
-                    doc["data"][it->first] = it->second.boolValue;
+                doc["data"][it->first] = std::get<int>(it->second.value);
                     break;
                 case RequestDataType::FLOAT:
-                    doc["data"][it->first] = it->second.floatValue;
+                doc["data"][it->first] = std::get<float>(it->second.value);
                     break;
-                
-                #ifdef STRING_DATA
-                case RequestDataType::STRING:
-                    doc["data"][it->first] = it->second.stringValue;
+                case RequestDataType::BOOL:
+                doc["data"][it->first] = std::get<bool>(it->second.value);
                     break;
-                #endif
                 
             }
+            
+            //std::visit([doc, it](auto&& elem){doc["data"][it->first] = elem; }, it->second.value);
             
         }
 

@@ -19,12 +19,12 @@ void setup() {
   request->setDeviceName("buzzer");
   request->setSender(Entity::DEVICE);
   request->setReceiver(Entity::MONITOR);
-  request->setMacAddress(WiFi.macAddress().c_str());
+  //request->setMacAddress(WiFi.macAddress().c_str());
 
   request->asData();
-  request->setData("imuaccel1", 12.9f);
-  request->setData("imuaccel2", 12.9f);
-  request->setData("imuaccel3", 12.9f);
+  request->setData<float>("imuaccel1", 12.9f);
+  request->setData<int>("imuaccel2", 5);
+  request->setData<float>("imuaccel3", 12.9f);
   Serial.println("phase 1");
   Serial.println(request->toString().c_str());
   Serial.println("phase 2");
