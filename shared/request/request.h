@@ -13,7 +13,9 @@
 #define STR_MAC_LEN 6
 #define STR_DEVICE_LEN 13
 #define STR_EVENT_LEN 20
+#define STR_REQ_DATA_NAME_LEN 7
 #define MAX_DATA_REQUEST_LENGTH 15
+
 
 typedef std::array<uint8_t, STR_MAC_LEN> MacAddress;
 
@@ -48,18 +50,19 @@ struct RequestHeader {
 
 struct RequestData {
     RequestDataType type {};
+    char name [STR_REQ_DATA_NAME_LEN] {""};
     std::variant<int, float, bool> value;
 };
 
 typedef std::map<std::string, RequestData> DataList;
 
-//template <std::size_t t>
+template <std::size_t t>
 struct RequestBody {
     //typedef t dataMaxSize;
     RequestHeader header {};
     char event[STR_EVENT_LEN] {""};
-    DataList data {};
-    //std::array<RequestData, dataMaxSize> data_ {};
+    //DataList data {};
+    std::array<RequestData, t> data {};
 };
 
 
@@ -84,16 +87,21 @@ class Request {
 
         template <typename T>
         void setData(std::string name, T data) {
-            RequestData dataStored {};
-            dataStored.type = getDataType(data);
-            dataStored.value = data;
-            requestBody_.data[name] = dataStored;
+            if(globalIndex_ < MAX_DATA_REQUEST_LENGTH) {
+                RequestData dataStored {};
+                dataStored.type = getDataType(data);
+                strncpy(dataStored.name, name.c_str(), STR_REQ_DATA_NAME_LEN);
+                dataStored.value = data;
+                requestBody_.data[globalIndex_] = dataStored;
+                globalIndex_++;
+            }
+            
         }
        
 
         std::string toString();
 
-        RequestBody getRequestBody();
+        RequestBody<MAX_DATA_REQUEST_LENGTH> getRequestBody();
 
         RequestDataType getDataType(int data) {return RequestDataType::INT;}
         RequestDataType getDataType(float data) {return RequestDataType::FLOAT;}
@@ -103,8 +111,8 @@ class Request {
         std::string entityToString_(Entity entity);
         std::string typeToString_(RequestType type);
 
-        
-        RequestBody requestBody_ {};
+        uint8_t globalIndex_ {};
+        RequestBody<MAX_DATA_REQUEST_LENGTH> requestBody_ {};
     
 };
 

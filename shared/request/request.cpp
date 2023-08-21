@@ -1,6 +1,6 @@
 #include "request.h"
 
-Request::Request() {
+Request::Request() : globalIndex_(0) {
 
 }
 void Request::setReceiver(Entity receiver) {
@@ -46,16 +46,16 @@ std::string Request::toString() {
         doc["event"] = std::string(requestBody_.event);
         
     }else if (requestBody_.header.type == RequestType::DEVICE_DATA) {
-        for (auto it = requestBody_.data.begin(); it!=requestBody_.data.end();it++) {
-            switch (it->second.type) {
+        for (int i = 0; i < globalIndex_ ; i++) {
+            switch (requestBody_.data[i].type) {
                 case RequestDataType::INT:
-                doc["data"][it->first] = std::get<int>(it->second.value);
+                doc["data"][requestBody_.data[i].name] = std::get<int>(requestBody_.data[i].value);
                     break;
                 case RequestDataType::FLOAT:
-                doc["data"][it->first] = std::get<float>(it->second.value);
+                doc["data"][requestBody_.data[i].name] = std::get<float>(requestBody_.data[i].value);
                     break;
                 case RequestDataType::BOOL:
-                doc["data"][it->first] = std::get<bool>(it->second.value);
+                doc["data"][requestBody_.data[i].name] = std::get<bool>(requestBody_.data[i].value);
                     break;
                 
             }
@@ -99,6 +99,6 @@ std::string Request::typeToString_(RequestType type) {
     return typeString;
 }
 
-RequestBody Request::getRequestBody() {
+RequestBody<MAX_DATA_REQUEST_LENGTH> Request::getRequestBody() {
     return requestBody_;
 }

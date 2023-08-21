@@ -4,11 +4,13 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <functional>
 
 #include <request.h>
 #include <transmission.h>
 #include <fct_utils.h>
 
+void legendTask (void * param);
 enum TransmissionState {
     ECHO_STANDBY = 0,
     IDENTIFICATION_STATE,
@@ -29,19 +31,21 @@ class Legend {
 
         void run();
         bool isReady();
+        void subProcess();
 
 
     private:
-        void sendEcho_();
+        void createSubProcess_ ();
+        void sendEcho_ ();
         void sendIdentificationFrame_ ();
-        void sendEchoFrame_();
-        void dataRecvCallback_(const unsigned char * addr, const unsigned char * data, int size);
-        void subProcess_(void*);
+        void sendEchoFrame_ ();
+        void dataRecvCallback_ (const unsigned char * addr, const unsigned char * data, int size);
+        
         std::unique_ptr<Transmission> com_ {};
         std::unique_ptr<Request> req_ {};
-        LegendStateMachine stateMachine {};
-        MacAddress myAddr {};
-        MacAddress masterAddr {};
+        LegendStateMachine stateMachine_ {};
+        MacAddress myAddr_ {};
+        MacAddress masterAddr_ {};
        
 
 
