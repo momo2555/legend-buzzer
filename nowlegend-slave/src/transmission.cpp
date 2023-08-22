@@ -121,6 +121,11 @@ void Transmission::sendAll(uint8_t* message, uint8_t len) {
     delayMicroseconds(2500);
   }
 }
+void Transmission::send(uint8_t address[], Request* request) {
+  auto requestBody = request->getRequestBody();
+  broadcastAll((uint8_t*)&(requestBody), sizeof(requestBody));
+  delayMicroseconds(500);
+}
 /*
 void Transmission::sendModules(FieldTransmission modules){
   //sendAll((uint8_t*)&modules, sizeof(modules));

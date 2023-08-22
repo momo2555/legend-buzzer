@@ -25,6 +25,10 @@ enum Entity : std::uint8_t {
     DEVICE
 
 };
+enum identificationResult : uint8_t {
+    ACCEPTED = 0,
+    REFUSED
+};
 enum RequestType : std::uint8_t {
     DEVICE_EVENT = 0,     //send an event
     DEVICE_DATA,          //Send data
@@ -86,7 +90,6 @@ class Request {
             request of type data
         */
         void asData();
-
         template <typename T>
         void setData(std::string name, T data) {
             if(globalIndex_ < MAX_DATA_REQUEST_LENGTH) {
@@ -100,7 +103,18 @@ class Request {
             }
             
         }
-       
+
+        /*
+            as identification
+        */
+        void asIdentification();
+
+        /*
+            as identification request
+        */
+        void asIdentificationResponse(identificationResult result);
+
+        
 
         std::string toString();
 

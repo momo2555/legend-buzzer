@@ -9,6 +9,9 @@
 #include <request.h>
 #include <transmission.h>
 #include <fct_utils.h>
+#include <timer.h>
+
+typedef std::unique_ptr<Timer> TimerPtr;
 
 void legendTask (void * param);
 enum TransmissionState {
@@ -19,6 +22,7 @@ enum TransmissionState {
 
 struct LegendStateMachine {
     TransmissionState transmissionState {ECHO_STANDBY};
+    bool masterRegistered {false};
 };
 
 class Legend {
@@ -36,16 +40,28 @@ class Legend {
 
     private:
         void createSubProcess_ ();
-        void sendEcho_ ();
+        
         void sendIdentificationFrame_ ();
         void sendEchoFrame_ ();
+        void sendAliveFrame_();
+
         void dataRecvCallback_ (const unsigned char * addr, const unsigned char * data, int size);
+        bool isMasterRegistered_();
+        
+        
         
         std::unique_ptr<Transmission> com_ {};
         std::unique_ptr<Request> req_ {};
         LegendStateMachine stateMachine_ {};
         MacAddress myAddr_ {};
         MacAddress masterAddr_ {};
+
+        //fake timers
+        TimerPtr echoTimer_ {};
+        TimerPtr identificationTimer_ {};
+        TimerPtr aliveTimer_ {};
+        void initAllTimers_();
+    
        
 
 

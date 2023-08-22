@@ -5,6 +5,7 @@
 #include <esp_now.h>
 #include "WiFi.h"
 #include "fct_utils.h"
+#include "request.h"
 
 
 #ifndef MAX_CONNECTION
@@ -42,6 +43,7 @@
             esp_now_register_recv_cb(receiveCallbackWrapper);
           }
           void send(uint8_t address[], uint8_t* message, uint8_t len);
+          void send(uint8_t address[], Request* request);
           void sendAll(uint8_t* message, uint8_t len);
           
 

@@ -37,6 +37,17 @@ void Request::asData() {
     requestBody_.header.type = RequestType::DEVICE_DATA;
 }
 
+void Request::asIdentification()  {
+    requestBody_.header.type = RequestType::IDENTIFICATION;
+ }
+
+/*
+    as identification response
+*/
+void Request::asIdentificationResponse(identificationResult result) {
+    requestBody_.header.type = RequestType::CONFIRM_IDENTITY;
+}
+
 std::string Request::toString() {
     ArduinoJson::DynamicJsonDocument doc(1024);
     doc["header"]["from"] = entityToString_(requestBody_.header.from);

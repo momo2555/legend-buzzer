@@ -11,14 +11,15 @@ Legend::Legend() {
     macAddressToIntArray(WiFi.macAddress().c_str(), myAddr_.data());
     req_->setMacAddress(myAddr_);
 
-    
-
-
-
+    echoTimer_ = std::make_unique<Timer>(Timer());
+    identificationTimer_ = std::make_unique<Timer>(Timer());
+    aliveTimer_ = std::make_unique<Timer>(Timer());
 }
+
 void Legend::enableConfiguration() {
 
 }
+
 void Legend::disableConfiguration() {
 
 }
@@ -27,10 +28,10 @@ void Legend::run() {
     com_->initTransmission();
     com_->OnDataRecv<Legend>(this, &Legend::dataRecvCallback_);
     createSubProcess_();
-
 }
+
 void Legend::createSubProcess_() {
-    //create a task that will be executed in the Task1code() function, with priority 1 and executed on core 0
+    initAllTimers_();
     xTaskCreatePinnedToCore(
             legendTask,   /* Task function. */
             "legendTask",     /* name of task. */
@@ -69,13 +70,26 @@ void Legend::subProcess() {
     switch (stateMachine_.transmissionState) {
         case TransmissionState::ECHO_STANDBY :
             // Send every second an echo
+            if(echoTimer_->isElapsed(1000)) {
+                echoTimer_->timer();
+                sendEchoFrame_();
+            }
             break;
 
         case TransmissionState::IDENTIFICATION_STATE :
+            // Send identification frame
+            if(identificationTimer_->isElapsed(2000)) {
+                identificationTimer_->timer();
+                sendIdentificationFrame_();
+            }
             break;
         
         case TransmissionState::READY_STATE :
             // Send an alive Request 
+            if(aliveTimer_->isElapsed(2000)) {
+                aliveTimer_->timer();
+                sendAliveFrame_();
+            }
             break;
 
         default:
@@ -85,10 +99,33 @@ void Legend::subProcess() {
     delay(8);
     
 }
+bool Legend::isMasterRegistered_() {
+    return stateMachine_.masterRegistered;
+}
+void Legend::sendIdentificationFrame_ () {
+    if(isMasterRegistered_() && stateMachine_.transmissionState == TransmissionState::IDENTIFICATION_STATE) {
+        auto identifyReq = std::make_unique<Request>(Request());
+        identifyReq->asIdentification();
+        MacAddress myAddress {};
+        macAddressToIntArray( WiFi.macAddress().c_str(), myAddress.data());
 
-void Legend::sendEcho_() {}
-void Legend::sendIdentificationFrame_ () {}
-void Legend::sendEchoFrame_() {}
+        identifyReq->setMacAddress(myAddress);
+        com_->send(masterAddr_.data(), identifyReq);
+    }
+}
+void Legend::sendEchoFrame_() {
+    if(!isMasterRegistered_() && stateMachine_.transmissionState == TransmissionState::IDENTIFICATION_STATE) {
+        
+    }
+}
+void Legend::sendAliveFrame_() {}
+
+void Legend::initAllTimers_() {
+    identificationTimer_->timer();
+    echoTimer_->timer();
+    aliveTimer_->timer();
+}
+
 
 void legendTask (void * param) {
     while(true) {
@@ -98,3 +135,5 @@ void legendTask (void * param) {
     }
 
 }
+
+
