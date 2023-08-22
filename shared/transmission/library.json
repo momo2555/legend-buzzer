@@ -1,0 +1,24 @@
+{
+    "name": "Transmission",
+    "keywords": "legend, transmission, com",
+    "description": "Legend Communication library to comminucate with the gamebox",
+    "version": "0.0.1",
+    "authors": {
+      "name": "Mohamed Al Glawi"
+    },
+    "exclude": [
+    ],
+    "frameworks": "*",
+    "platforms": "*",
+    "build": {
+      "libArchive": false
+    },
+    "dependencies" : [
+        {
+            "owner": "bblanchon",
+            "name": "ArduinoJson",
+            "version": "^6.16.1"
+        }
+    ]
+  }
+  
