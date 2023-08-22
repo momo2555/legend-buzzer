@@ -1,6 +1,11 @@
 #include "request.h"
 
 Request::Request() : globalIndex_(0) {
+    //empty request
+}
+Request::Request(const unsigned char * rawData, int size) {
+    requestBody_ = *((*RequestBody<MAX_DATA_REQUEST_LENGTH>) rawData);
+    globalIndex_ = requestBody_.header.dataLength;
 
 }
 void Request::setReceiver(Entity receiver) {
@@ -23,7 +28,6 @@ void Request::setMacAddress(std::array<uint8_t, STR_MAC_LEN> macAddress) {
 void Request::asEvent(const char* eventName) {
     requestBody_.header.type = RequestType::DEVICE_EVENT;
     strncpy(requestBody_.event, eventName, STR_EVENT_LEN);
-    
 }
 
 /*
@@ -33,10 +37,7 @@ void Request::asData() {
     requestBody_.header.type = RequestType::DEVICE_DATA;
 }
 
-
-
 std::string Request::toString() {
-    
     ArduinoJson::DynamicJsonDocument doc(1024);
     doc["header"]["from"] = entityToString_(requestBody_.header.from);
     doc["header"]["to"] = entityToString_(requestBody_.header.to);
@@ -49,21 +50,17 @@ std::string Request::toString() {
         for (int i = 0; i < globalIndex_ ; i++) {
             switch (requestBody_.data[i].type) {
                 case RequestDataType::INT:
-                doc["data"][requestBody_.data[i].name] = std::get<int>(requestBody_.data[i].value);
+                    doc["data"][requestBody_.data[i].name] = std::get<int>(requestBody_.data[i].value);
                     break;
                 case RequestDataType::FLOAT:
-                doc["data"][requestBody_.data[i].name] = std::get<float>(requestBody_.data[i].value);
+                    doc["data"][requestBody_.data[i].name] = std::get<float>(requestBody_.data[i].value);
                     break;
                 case RequestDataType::BOOL:
-                doc["data"][requestBody_.data[i].name] = std::get<bool>(requestBody_.data[i].value);
+                    doc["data"][requestBody_.data[i].name] = std::get<bool>(requestBody_.data[i].value);
                     break;
-                
             }
-            
             //std::visit([doc, it](auto&& elem){doc["data"][it->first] = elem; }, it->second.value);
-            
         }
-
     }
     std::string serializedData {""};
     ArduinoJson::serializeJson(doc, serializedData);
@@ -101,4 +98,24 @@ std::string Request::typeToString_(RequestType type) {
 
 RequestBody<MAX_DATA_REQUEST_LENGTH> Request::getRequestBody() {
     return requestBody_;
+}
+
+RequestType Request::getType() {
+    return requestBody_.header.type;
+}
+Entity Request::getReceiver() {
+    return requestBody_.header.to;
+}
+Entity Request::getSender() {
+    return requestBody_.header.from;
+}
+char* Request::getDeviceName() {
+    
+}
+RequestData Request::getDataAt(uint8_t index) {
+    RequestData requestdata {};
+    if (index < globalIndex_ && getType() == RequestType::DEVICE_DATA) {
+        requestData = requestBody_.data[index]
+    }
+    return requestData;
 }

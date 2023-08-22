@@ -42,6 +42,7 @@ enum RequestDataType : std::uint8_t {
 };
 struct RequestHeader {
     RequestType type {};
+    uint8_t dataLength {0};
     Entity from {};
     Entity to {};
     std::array<uint8_t, STR_MAC_LEN> mac {};
@@ -69,6 +70,7 @@ struct RequestBody {
 class Request {
     public:
         Request();
+        Request(const unsigned char * rawData, int size);
         ~Request() {};
         void setReceiver(Entity receiver);
         void setSender(Entity sender);
@@ -94,6 +96,7 @@ class Request {
                 dataStored.value = data;
                 requestBody_.data[globalIndex_] = dataStored;
                 globalIndex_++;
+                requestBody_.header.dataLength = globalIndex_;
             }
             
         }
@@ -106,6 +109,13 @@ class Request {
         RequestDataType getDataType(int data) {return RequestDataType::INT;}
         RequestDataType getDataType(float data) {return RequestDataType::FLOAT;}
         RequestDataType getDataType(bool data) {return RequestDataType::BOOL;}
+
+        RequestType getType();
+        Entity getReceiver();
+        Entity getSender();
+        char* getDeviceName();
+        RequestData getDataAt(uint8_t index);
+
         
     private:
         std::string entityToString_(Entity entity);

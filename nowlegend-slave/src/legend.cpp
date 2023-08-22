@@ -31,25 +31,59 @@ void Legend::run() {
 }
 void Legend::createSubProcess_() {
     //create a task that will be executed in the Task1code() function, with priority 1 and executed on core 0
-    
     xTaskCreatePinnedToCore(
-                        legendTask,   /* Task function. */
-                        "legendTask",     /* name of task. */
-                        10000,       /* Stack size of task */
-                        (void*)this,        /* parameter of the task */
-                        1,           /* priority of the task */
-                        &subProc,      /* Task handle to keep track of created task */
-                        0);          /* pin task to core 0 */ 
+            legendTask,   /* Task function. */
+            "legendTask",     /* name of task. */
+            10000,       /* Stack size of task */
+            (void*)this,        /* parameter of the task */
+            1,           /* priority of the task */
+            &subProc,      /* Task handle to keep track of created task */
+            0);          /* pin task to core 0 */ 
 
     delay (500);
 }
 void Legend::dataRecvCallback_(const unsigned char * addr, const unsigned char * data, int size) {
 
+    auto receivedRequest = std::make_unique<Request>(Request(data, size));
+    switch(receivedRequest->getType()) {
+        case RequestType::ECHO_RESPONSE: // STEP 1
+            // receive the echo response : save the master address and send identification
+            break;
+        case RequestType::CONFIRM_IDENTITY: // STEP 2
+            // The master confirm the identification
+            break;
+        case RequestType::DEVICE_DATA: 
+            // Receive new data
+            break;
+        case RequestType::DEVICE_EVENT:
+            //receive a new event
+            break;
+        default:
+            break;
+    }
+
 }
 
 void Legend::subProcess() {
+    
+    switch (stateMachine_.transmissionState) {
+        case TransmissionState::ECHO_STANDBY :
+            // Send every second an echo
+            break;
+
+        case TransmissionState::IDENTIFICATION_STATE :
+            break;
+        
+        case TransmissionState::READY_STATE :
+            // Send an alive Request 
+            break;
+
+        default:
+            break;
+    }
     Serial.println("coucou");
-    delay(500);
+    delay(8);
+    
 }
 
 void Legend::sendEcho_() {}

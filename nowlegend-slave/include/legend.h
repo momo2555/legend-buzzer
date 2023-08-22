@@ -26,8 +26,8 @@ class Legend {
         Legend();
         void enableConfiguration();
         void disableConfiguration();
-        void setDefaultPassword(std::string& password);
-        void setDefaultSSID(std::string& ssid);
+        //void setDefaultPassword(std::string& password);
+        //void setDefaultSSID(std::string& ssid);
 
         void run();
         bool isReady();
