@@ -61,6 +61,8 @@ class Legend {
         TimerPtr identificationTimer_ {};
         TimerPtr aliveTimer_ {};
         void initAllTimers_();
+
+        bool isSubprocessLaunched {false};
     
        
 

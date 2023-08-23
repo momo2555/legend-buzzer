@@ -19,6 +19,12 @@
   void receiveCallbackWrapper(const unsigned char* a, const unsigned char* b, int c);
   void setReceiveCallback(ReceiveCallback cb);
 
+  enum SendMethod {
+    SINGLE = 0,
+    ALL_PEERED,
+    BROADCAST,
+  };
+
   class Transmission {
       public:
           Transmission();
@@ -34,16 +40,16 @@
           void OnDataRecv(A* class_ptr, void (A::* callBack)(const unsigned char*, const unsigned char*, int)) {
             
             setReceiveCallback(
-            [class_ptr, callBack](const unsigned char*a, const unsigned char*b, int c) -> void
-            {
-                (class_ptr->*callBack)(a, b, c);
-            }
+              [class_ptr, callBack](const unsigned char*a, const unsigned char*b, int c) -> void
+              {
+                  (class_ptr->*callBack)(a, b, c);
+              }
             );
 
             esp_now_register_recv_cb(receiveCallbackWrapper);
           }
           void send(uint8_t address[], uint8_t* message, uint8_t len);
-          void send(uint8_t address[], Request* request);
+          void send(MacAddress address, Request* request, SendMethod mothod = SendMethod::SINGLE);
           void sendAll(uint8_t* message, uint8_t len);
           
 
