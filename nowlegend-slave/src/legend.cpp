@@ -28,6 +28,7 @@ void Legend::run()
     com_->initTransmission();
     com_->registerEchoPeer();
     com_->OnDataRecv<Legend>(this, &Legend::dataRecvCallback_);
+    stateMachine_.transmissionState = TransmissionState::ECHO_STANDBY;
     createSubProcess_();
 }
 
@@ -56,6 +57,7 @@ void Legend::dataRecvCallback_(const unsigned char *addr, const unsigned char *d
     {
     case RequestType::ECHO_RESPONSE: // STEP 1
         // receive the echo response : save the master address and send identification
+        Serial.println("receive response echo ");
         break;
     case RequestType::CONFIRM_IDENTITY: // STEP 2
         // The master confirm the identification
@@ -106,7 +108,7 @@ void Legend::subProcess()
     default:
         break;
     }
-    Serial.println("coucou");
+    //Serial.println("coucou");
     delay(8);
 }
 bool Legend::isMasterRegistered_()
@@ -129,7 +131,8 @@ void Legend::sendEchoFrame_()
 {
     // broadcast an echo message
     if (!isMasterRegistered_() && stateMachine_.transmissionState == TransmissionState::ECHO_STANDBY)
-    {
+    {   
+        Serial.println("send echo");
         auto echoReq = std::make_unique<Request>(Request());
         echoReq->asEcho();
         MacAddress myAddress{};
@@ -162,7 +165,7 @@ void legendTask(void *param)
 {
     while (true)
     {
-        Serial.println("coucocu you ");
+        //Serial.println("coucou you ");
         Legend *legend = (Legend *)param;
         legend->subProcess();
     }

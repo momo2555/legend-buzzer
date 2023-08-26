@@ -50,7 +50,9 @@
           }
           void send(uint8_t address[], uint8_t* message, uint8_t len);
           void send(MacAddress address, Request* request, SendMethod mothod = SendMethod::SINGLE);
+          void sendOnce(MacAddress address, Request* request, bool strict = false);
           void sendAll(uint8_t* message, uint8_t len);
+          
           
 
           void broadcastAll(uint8_t* message, uint8_t len);
@@ -58,6 +60,7 @@
           bool isNewMessage() {return newMessage;};
           uint8_t getPeerInex() {return peerIndex;};
           std::string getMyAddress(){return myStrAddress;};
+          bool isPeerRegistered(uint8_t address[]);
           
           
       private:

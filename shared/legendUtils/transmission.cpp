@@ -77,6 +77,17 @@ void Transmission::deletePeer(std::string address)
     macAddressToIntArray(address, intAddress);
     deletePeer(intAddress);
 }
+bool Transmission::isPeerRegistered(uint8_t address[]) {
+    bool exist = false;
+    for (uint8_t i = 0; i < peerIndex; i++)
+    {
+        if (compareAddresses(peerAdresses[i], address))
+        {
+            exist = true;
+        }
+    }
+    return exist;
+}
 void Transmission::initTransmission()
 {
 
@@ -136,7 +147,7 @@ void Transmission::sendAll(uint8_t *message, uint8_t len)
         delayMicroseconds(2500);
     }
 }
-void Transmission::send(MacAddress address, Request *request, SendMethod method = SendMethod::SINGLE)
+void Transmission::send(MacAddress address, Request *request, SendMethod method)
 {
     auto requestBody = request->getRequestBody();
     if (method == SendMethod::SINGLE) 
@@ -149,6 +160,17 @@ void Transmission::send(MacAddress address, Request *request, SendMethod method 
         
 
     delayMicroseconds(500);
+}
+void Transmission::sendOnce(MacAddress address, Request* request, bool strict) {
+    auto requestBody = request->getRequestBody();
+    if(!isPeerRegistered(address.data())) {
+        registerPeer(address.data());
+    }
+    send(address, request);
+    if(strict) {
+        deletePeer(address.data());
+    }
+    
 }
 /*
 void Transmission::sendModules(FieldTransmission modules){

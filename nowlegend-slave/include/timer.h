@@ -6,7 +6,7 @@
 class Timer {
     public:
         Timer();
-        void timer() {};
+        void timer();
         int getLast();
         bool isElapsed(int time);
 

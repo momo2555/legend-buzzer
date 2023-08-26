@@ -13,7 +13,7 @@
 #define STR_DEVICE_LEN 13
 #define STR_EVENT_LEN 20
 #define STR_REQ_DATA_NAME_LEN 7
-#define MAX_DATA_REQUEST_LENGTH 15
+#define MAX_DATA_REQUEST_LENGTH 12
 
 typedef std::array<uint8_t, STR_MAC_LEN> MacAddress;
 
@@ -128,7 +128,7 @@ public:
     /*
         as echo response request
     */
-    void asEchoResponse(MacAddress responseAdress);
+    void asEchoResponse();
 
     std::string toString();
 

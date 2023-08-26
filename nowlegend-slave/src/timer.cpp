@@ -1,6 +1,3 @@
-#ifndef TIMER_H
-#define TIMER_H
-
 #include "timer.h"
 
 Timer::Timer() {
@@ -18,5 +15,3 @@ bool Timer::isElapsed(int time) {
         return millis() - stamp_  > time;
    
 }
-
-#endif

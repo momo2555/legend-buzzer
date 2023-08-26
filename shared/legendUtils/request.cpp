@@ -6,7 +6,8 @@ Request::Request() : globalIndex_(0)
 }
 Request::Request(const unsigned char *rawData, int size)
 {
-    requestBody_ = *((*RequestBody<MAX_DATA_REQUEST_LENGTH>)rawData);
+    //requestBody_ = *( (*RequestBody<MAX_DATA_REQUEST_LENGTH>) rawData);
+    memmove(&requestBody_, rawData, sizeof(requestBody_));
     globalIndex_ = requestBody_.header.dataLength;
 }
 void Request::setReceiver(Entity receiver)
@@ -67,7 +68,7 @@ void Request::asEcho()
 /*
     as echo response request
 */
-void Request::asEchoResponse(MacAddress responseAdress)
+void Request::asEchoResponse()
 {
     requestBody_.header.type = RequestType::ECHO_RESPONSE;
 }
@@ -161,10 +162,10 @@ char *Request::getDeviceName()
 }
 RequestData Request::getDataAt(uint8_t index)
 {
-    RequestData requestdata{};
+    RequestData requestData{};
     if (index < globalIndex_ && getType() == RequestType::DEVICE_DATA)
     {
-        requestData = requestBody_.data[index]
+        requestData = requestBody_.data[index];
     }
     return requestData;
 }

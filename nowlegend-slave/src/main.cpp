@@ -46,9 +46,5 @@ void setup() {
 }
 
 void loop() {
-  std::array<int, 2> test {};
-  Serial.println(sizeof(test));
-  Serial.print("loop() running on core ");
-  Serial.println(xPortGetCoreID());
   delay(1000);
 }
