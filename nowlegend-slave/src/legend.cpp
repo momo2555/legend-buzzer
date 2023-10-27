@@ -144,8 +144,9 @@ void Legend::sendEchoFrame_()
         echoReq->setMacAddress(myAddress);
         //MacAddress emptyAddr {};
         //com_->send(emptyAddr, echoReq.get(), SendMethod::BROADCAST);
-        MacAddress emptyAddr {0xc8, 0xc9, 0xa3, 0xcf, 0x83, 0x50};
-        com_->sendOnce(emptyAddr, echoReq.get(), true);
+        MacAddress emptyAddr {};
+        com_->send(emptyAddr, echoReq.get(), SendMethod::BROADCAST);
+        //com_->sendOnce(emptyAddr, echoReq.get(), true);
     }
 }
 void Legend::sendAliveFrame_() {

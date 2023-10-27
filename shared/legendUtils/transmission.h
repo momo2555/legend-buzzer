@@ -42,15 +42,11 @@
             setReceiveCallback(
               [class_ptr, callBack](const unsigned char*a, const unsigned char*b, int c) -> void
               {
-                Serial.println("receive a new frame");
                 (class_ptr->*callBack)(a, b, c);
               }
             );
 
-            //esp_now_register_recv_cb(receiveCallbackWrapper);
-            esp_now_register_recv_cb([](const unsigned char*a, const unsigned char*b, int c) {
-              Serial.println("YO SENT !");
-            });
+            esp_now_register_recv_cb(receiveCallbackWrapper);
           }
           void send(uint8_t address[], uint8_t* message, uint8_t len);
           void send(MacAddress address, Request* request, SendMethod mothod = SendMethod::SINGLE);

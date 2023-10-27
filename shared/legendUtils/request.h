@@ -143,6 +143,7 @@ public:
     Entity getSender();
     char *getDeviceName();
     RequestData getDataAt(uint8_t index);
+    MacAddress getMacAddress(){return requestBody_.header.mac;};
 
 private:
     std::string entityToString_(Entity entity);

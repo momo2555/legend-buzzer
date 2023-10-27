@@ -17,8 +17,9 @@ void LegendMaster::dataRecvCallback_(const unsigned char *addr, const unsigned c
     switch (receivedRequest->getType())
     {
     case RequestType::ECHO: // STEP 1
-        // send bach the echo
-        Serial.println("receive echo ");
+        // send back the echo
+        Serial.println("receive echo - send it back ");
+        this->sendEchoResponseFrame_(receivedRequest.get());
         break;
     case RequestType::IDENTIFICATION: // STEP 2
         // The master confirm the identification
@@ -34,14 +35,15 @@ void LegendMaster::dataRecvCallback_(const unsigned char *addr, const unsigned c
     }
 }
 
-void LegendMaster::sendEchoResponseFrame_ () {
+void LegendMaster::sendEchoResponseFrame_ (Request* echoRequest) {
     // broadcast an echo message
-    auto echoReq = std::make_unique<Request>(Request());
-    echoReq->asEchoResponse();
+    auto echoResponseReq = std::make_unique<Request>(Request());
+    echoResponseReq->asEchoResponse();
     MacAddress myAddress{};
     macAddressToIntArray(WiFi.macAddress().c_str(), myAddress.data());
-    echoReq->setMacAddress(myAddress);
-    MacAddress emptyAddr {};
-    com_->send(emptyAddr, echoReq.get(), SendMethod::BROADCAST);
+    echoResponseReq->setMacAddress(myAddress);
+
+    MacAddress sender = echoRequest->getMacAddress();
+    com_->sendOnce(sender, echoResponseReq.get(), true);
     
 }
