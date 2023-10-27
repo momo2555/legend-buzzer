@@ -11,7 +11,7 @@ class LegendMaster
     // send and read the serial port
 public:
     LegendMaster();
-    ~LegendMaster(){};
+    //~LegendMaster(){};
     void run();
 
 private:

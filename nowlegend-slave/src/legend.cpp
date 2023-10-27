@@ -28,6 +28,10 @@ void Legend::run()
     com_->initTransmission();
     com_->registerEchoPeer();
     com_->OnDataRecv<Legend>(this, &Legend::dataRecvCallback_);
+    com_->OnDataSent([](const unsigned char * addr, esp_now_send_status_t status){
+        Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+        Serial.println("frame sent");
+    });
     stateMachine_.transmissionState = TransmissionState::ECHO_STANDBY;
     createSubProcess_();
 }
@@ -138,8 +142,10 @@ void Legend::sendEchoFrame_()
         MacAddress myAddress{};
         macAddressToIntArray(WiFi.macAddress().c_str(), myAddress.data());
         echoReq->setMacAddress(myAddress);
-        MacAddress emptyAddr {};
-        com_->send(emptyAddr, echoReq.get(), SendMethod::BROADCAST);
+        //MacAddress emptyAddr {};
+        //com_->send(emptyAddr, echoReq.get(), SendMethod::BROADCAST);
+        MacAddress emptyAddr {0xc8, 0xc9, 0xa3, 0xcf, 0x83, 0x50};
+        com_->sendOnce(emptyAddr, echoReq.get(), true);
     }
 }
 void Legend::sendAliveFrame_() {
