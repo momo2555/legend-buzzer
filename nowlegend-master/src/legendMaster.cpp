@@ -1,8 +1,10 @@
 #include "legendMaster.h"
 
 LegendMaster::LegendMaster() {
-    com_ = std::make_unique<Transmission>(Transmission());
-    com_->initTransmission();
+    this->com_ = std::make_shared<Transmission>(Transmission());
+    this->com_->initTransmission();
+    router_ = std::make_shared<RouterInterface>(RouterInterface(com_));
+
 }
 void LegendMaster::run() {
     com_->OnDataRecv<LegendMaster>(this, &LegendMaster::dataRecvCallback_);

@@ -3,6 +3,7 @@
 
 #include "transmission.h"
 #include "request.h"
+#include "routerInterface.h"
 
 class LegendMaster
 {
@@ -19,7 +20,9 @@ private:
     //void sendAliveFrame_();
     void dataRecvCallback_(const unsigned char *addr, const unsigned char *data, int size);
     
-    std::unique_ptr<Transmission> com_ {};
+    std::shared_ptr<Transmission> com_ {};
+    std::shared_ptr<RouterInterface> router_ {};
+
 
 };
 
