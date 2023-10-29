@@ -5,13 +5,13 @@ BaseHandler::BaseHandler(std::shared_ptr<RouterInterface> router)
     this->router_ = router;
 }
 
-void BaseHandler::handle(Request request)
+void BaseHandler::handle(Request *request)
 {
 
 
 }
 
-bool BaseHandler::canHandle(Request request)
+bool BaseHandler::canHandle(Request *request)
 {
     return false;
 }

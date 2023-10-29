@@ -16,6 +16,7 @@ class HandlerManager
 public:
     HandlerManager(std::shared_ptr<RouterInterface> router);
     void handleRequest(Request request);
+    void addHandler(BaseHandler handler);
 private:
     void initHandlers_();
     std::shared_ptr<RouterInterface> router_ {};

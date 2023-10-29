@@ -1,7 +1,10 @@
 #include "routerInterface.h"
 
-RouterInterface::RouterInterface(std::unique_ptr<Transmission> com)
+RouterInterface::RouterInterface(std::shared_ptr<Transmission> com)
 {
     this->com_ = com;
 }
 
+void RouterInterface::route(Request *request, MacAddress address)
+{
+}

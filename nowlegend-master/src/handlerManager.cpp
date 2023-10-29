@@ -11,6 +11,11 @@ void HandlerManager::handleRequest(Request request)
     
 }
 
+void HandlerManager::addHandler(BaseHandler handler)
+{
+    this->handlers_.push_back(handler);
+}
+
 void HandlerManager::initHandlers_()
 {
 

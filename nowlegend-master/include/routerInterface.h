@@ -8,7 +8,7 @@ class RouterInterface
 {
 public:
     RouterInterface(std::shared_ptr<Transmission> com);
-    void route(Request request, MacAddress address);
+    void route(Request *request, MacAddress address);
 private:
     std::shared_ptr<Transmission> com_ {};
 
