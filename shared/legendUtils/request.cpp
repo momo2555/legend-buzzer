@@ -52,14 +52,15 @@ void Request::asIdentification()
 
 /*
     as identification response
- */
+*/
 void Request::asIdentificationResponse(identificationResult result)
 {
     requestBody_.header.type = RequestType::CONFIRM_IDENTITY;
 }
+
 /*
-            as echo request
-        */
+    as echo request
+*/
 void Request::asEcho()
 {
     requestBody_.header.type = RequestType::ECHO;
@@ -71,6 +72,16 @@ void Request::asEcho()
 void Request::asEchoResponse()
 {
     requestBody_.header.type = RequestType::ECHO_RESPONSE;
+}
+
+void Request::asHeartbeat()
+{
+    requestBody_.header.type = RequestType::HEARTBEAT;
+}
+
+void Request::asHeartbeatResponse()
+{
+    requestBody_.header.type = RequestType::HEARTBEAT_RESPONSE;
 }
 
 std::string Request::toString()

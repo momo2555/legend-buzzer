@@ -5,7 +5,9 @@ LegendMaster::LegendMaster() {
     this->com_->initTransmission();
     router_ = std::make_shared<RouterInterface>(RouterInterface(com_));
     handlerManager_ = std::make_unique<HandlerManager>(HandlerManager(router_));
-    
+    //echo Handler
+    auto echoHandler = EchoHandler(router_);
+    handlerManager_->addHandler(echoHandler);
 
 }
 void LegendMaster::run() {
@@ -18,11 +20,13 @@ void LegendMaster::dataRecvCallback_(const unsigned char *addr, const unsigned c
 {
     Serial.println("receive data");
     auto receivedRequest = std::make_unique<Request>(Request(data, size));
-    switch (receivedRequest->getType())
+    this->handlerManager_->handleRequest(receivedRequest.get());
+    
+    /*switch (receivedRequest->getType())
     {
     case RequestType::ECHO: // STEP 1
         // send back the echo
-        Serial.println("receive echo - send it back ");
+
         this->sendEchoResponseFrame_(receivedRequest.get());
         break;
     case RequestType::IDENTIFICATION: // STEP 2
@@ -36,7 +40,7 @@ void LegendMaster::dataRecvCallback_(const unsigned char *addr, const unsigned c
         break;
     default:
         break;
-    }
+    }*/
 }
 
 void LegendMaster::sendEchoResponseFrame_ (Request* echoRequest) {

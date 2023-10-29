@@ -5,6 +5,10 @@
 #include "request.h"
 #include "routerInterface.h"
 #include "handlers/handlerManager.h"
+#include "handlers/echoHandler.h"
+#include "handlers/identificationHandler.h"
+#include "handlers/messageHandler.h"
+#include "handlers/heartbeatHandler.h"
 
 class LegendMaster
 {

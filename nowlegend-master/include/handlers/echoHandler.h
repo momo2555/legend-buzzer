@@ -6,6 +6,7 @@
 class EchoHandler : public BaseHandler 
 {
 public:
+    EchoHandler(std::shared_ptr<RouterInterface> router);
     void handle(Request *request);
     bool canHandle(Request *request);
 

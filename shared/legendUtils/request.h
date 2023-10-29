@@ -37,7 +37,8 @@ enum RequestType : std::uint8_t
     ECHO_RESPONSE,    // the master respond with a echo
     IDENTIFICATION,   // send an isentification
     CONFIRM_IDENTITY, // confirm the identification
-    ALIVE,            // Say to master that the device is alive to not trigger the watchdog
+    HEARTBEAT,        // Say to master that the device is alive to not trigger the watchdog
+    HEARTBEAT_RESPONSE, // the server repond back to confirm that he is alived to
 };
 enum RequestDataType : std::uint8_t
 {
@@ -129,6 +130,16 @@ public:
         as echo response request
     */
     void asEchoResponse();
+
+    /*
+        as heartbeat request
+    */
+    void asHeartbeat();
+
+    /*
+        as heartbeat response
+    */
+    void asHeartbeatResponse();
 
     std::string toString();
 
