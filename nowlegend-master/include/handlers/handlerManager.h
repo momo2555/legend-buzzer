@@ -5,12 +5,22 @@
 #include "transmission.h"
 #include "request.h"
 
-class HandlerManger
+#include "baseHandler.h"
+#include "echoHandler.h"
+#include "heartbeatHandler.h"
+#include "identificationHandler.h"
+#include "messageHandler.h"
+
+class HandlerManager
 {
 public:
-    HandlerManger(std::shared_ptr<RouterInterface> router);
+    HandlerManager(std::shared_ptr<RouterInterface> router);
+    void handleRequest(Request request);
 private:
+    void initHandlers_();
     std::shared_ptr<RouterInterface> router_ {};
+    std::vector<BaseHandler> handlers_ {};
+    
 };
 
 #endif

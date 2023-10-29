@@ -4,6 +4,7 @@
 #include "transmission.h"
 #include "request.h"
 #include "routerInterface.h"
+#include "handlers/handlerManager.h"
 
 class LegendMaster
 {

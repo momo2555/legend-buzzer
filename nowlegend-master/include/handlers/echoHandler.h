@@ -7,6 +7,7 @@ class EchoHandler : public BaseHandler
 {
 public:
     void handle(Request request);
+    bool canHandle(Request request);
 
 };
 

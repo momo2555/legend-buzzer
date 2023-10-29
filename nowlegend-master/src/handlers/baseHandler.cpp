@@ -1,4 +1,4 @@
-#include "baseHandler.h"
+#include "handlers/baseHandler.h"
 
 BaseHandler::BaseHandler(std::shared_ptr<RouterInterface> router)
 {
@@ -9,4 +9,9 @@ void BaseHandler::handle(Request request)
 {
 
 
+}
+
+bool BaseHandler::canHandle(Request request)
+{
+    return false;
 }
