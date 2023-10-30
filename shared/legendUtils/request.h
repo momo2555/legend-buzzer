@@ -21,7 +21,8 @@ enum Entity : std::uint8_t
 {
     MONITOR = 0,
     CONTROLLER,
-    DEVICE
+    DEVICE,
+    MASTER
 
 };
 enum identificationResult : uint8_t

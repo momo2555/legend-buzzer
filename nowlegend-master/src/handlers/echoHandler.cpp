@@ -14,6 +14,8 @@ void EchoHandler::handle(Request *request)
     MacAddress myAddress{};
     macAddressToIntArray(WiFi.macAddress().c_str(), myAddress.data());
     echoResponseReq->setMacAddress(myAddress);
+    echoResponseReq->setSender(Entity::MASTER);
+    echoResponseReq->setReceiver(Entity::DEVICE);
 
     MacAddress sender = request->getMacAddress();
     //com_->sendOnce(sender, echoResponseReq.get(), true);
