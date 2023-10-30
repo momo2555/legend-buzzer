@@ -1,4 +1,4 @@
-#include "handlers/handlerManager.h"
+#include "handlerManager.h"
 
 HandlerManager::HandlerManager(std::shared_ptr<RouterInterface> router)
 {

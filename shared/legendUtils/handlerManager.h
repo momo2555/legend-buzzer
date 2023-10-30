@@ -6,10 +6,7 @@
 #include "request.h"
 
 #include "baseHandler.h"
-#include "echoHandler.h"
-#include "heartbeatHandler.h"
-#include "identificationHandler.h"
-#include "messageHandler.h"
+
 
 class HandlerManager
 {

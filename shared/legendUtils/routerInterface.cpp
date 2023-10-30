@@ -13,5 +13,6 @@ void RouterInterface::route(Request *request, MacAddress address)
     } else if (request->getReceiver() == Entity::CONTROLLER ||
                request->getReceiver() == Entity::MONITOR) {
         //talk on the serial port interface
+        
     }
 }

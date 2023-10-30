@@ -48,7 +48,7 @@ void LegendMaster::dataRecvCallback_(const unsigned char *addr, const unsigned c
     }*/
 }
 
-void LegendMaster::sendEchoResponseFrame_ (Request* echoRequest) {
+/*void LegendMaster::sendEchoResponseFrame_ (Request* echoRequest) {
     // broadcast an echo message
     auto echoResponseReq = std::make_unique<Request>(Request());
     echoResponseReq->asEchoResponse();
@@ -59,4 +59,4 @@ void LegendMaster::sendEchoResponseFrame_ (Request* echoRequest) {
     MacAddress sender = echoRequest->getMacAddress();
     com_->sendOnce(sender, echoResponseReq.get(), true);
     
-}
+}*/

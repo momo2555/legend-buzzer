@@ -4,7 +4,7 @@
 #include "transmission.h"
 #include "request.h"
 #include "routerInterface.h"
-#include "handlers/handlerManager.h"
+#include "handlerManager.h"
 #include "handlers/echoHandler.h"
 #include "handlers/identificationHandler.h"
 #include "handlers/messageHandler.h"
