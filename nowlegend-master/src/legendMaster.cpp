@@ -7,13 +7,18 @@ LegendMaster::LegendMaster() {
     handlerManager_ = std::make_unique<HandlerManager>(HandlerManager(router_));
     //echo Handler
     auto echoHandler = EchoHandler(router_);
-    handlerManager_->addHandler(echoHandler);
+    auto messageHandler = MessageHandler(router_);
+    auto identificationHandler = IdentificationHandler(router_);
+    auto heartbeatHandler = HeartbeatHandler(router_);
 
+    handlerManager_->addHandler(echoHandler);
+    handlerManager_->addHandler(messageHandler);
+    handlerManager_->addHandler(identificationHandler);
+    handlerManager_->addHandler(heartbeatHandler);
 }
+
 void LegendMaster::run() {
     com_->OnDataRecv<LegendMaster>(this, &LegendMaster::dataRecvCallback_);
-
-
 }
 
 void LegendMaster::dataRecvCallback_(const unsigned char *addr, const unsigned char *data, int size)
