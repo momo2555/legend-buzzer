@@ -11,7 +11,7 @@ public:
     BaseHandler(std::shared_ptr<RouterInterface> router);
     void handle(Request *request);
     bool canHandle(Request *request);
-private:
+protected:
     std::shared_ptr<RouterInterface> router_ {};
 
 };

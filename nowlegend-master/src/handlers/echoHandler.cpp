@@ -1,5 +1,4 @@
 #include "handlers/echoHandler.h"
-#include "echoHandler.h"
 
 EchoHandler::EchoHandler(std::shared_ptr<RouterInterface> router)
     : BaseHandler {router}
@@ -16,9 +15,9 @@ void EchoHandler::handle(Request *request)
     macAddressToIntArray(WiFi.macAddress().c_str(), myAddress.data());
     echoResponseReq->setMacAddress(myAddress);
 
-    MacAddress sender = echoRequest->getMacAddress();
+    MacAddress sender = request->getMacAddress();
     //com_->sendOnce(sender, echoResponseReq.get(), true);
-    this->router_->route(echoResponseReq, sender);
+    this->router_->route(request, sender);
 }
 
 bool EchoHandler::canHandle(Request *request)
