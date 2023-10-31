@@ -21,8 +21,6 @@ public:
     void run();
 
 private:
-    void sendEchoResponseFrame_ (Request* echoRequest);
-    //void sendAliveFrame_();
     void dataRecvCallback_(const unsigned char *addr, const unsigned char *data, int size);
     
     std::shared_ptr<Transmission> com_ {};

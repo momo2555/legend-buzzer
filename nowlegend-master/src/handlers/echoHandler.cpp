@@ -8,7 +8,7 @@ EchoHandler::EchoHandler(std::shared_ptr<RouterInterface> router)
 
 void EchoHandler::handle(Request *request)
 {
-    Serial.println("receive echo - send it back ");
+    Serial.println("EchoHandler : receive echo - send it back ");
     auto echoResponseReq = std::make_unique<Request>(Request());
     echoResponseReq->asEchoResponse();
     MacAddress myAddress{};
@@ -24,7 +24,7 @@ void EchoHandler::handle(Request *request)
 
 bool EchoHandler::canHandle(Request *request)
 {
-    Serial.println("It's an echo request");
+    Serial.println("EchoHandler : Is it an echo request ?");
     return request->getType() == RequestType::ECHO;
     
 }

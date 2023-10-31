@@ -9,8 +9,9 @@ class BaseHandler
 
 public:
     BaseHandler(std::shared_ptr<RouterInterface> router);
-    void handle(Request *request);
-    bool canHandle(Request *request);
+    virtual void handle(Request *request) {};
+    
+    virtual bool canHandle(Request *request) {Serial.println("BaseHandler : canHandle");return false;};
 protected:
     std::shared_ptr<RouterInterface> router_ {};
 
