@@ -19,7 +19,7 @@ void EchoHandler::handle(Request *request)
 
     MacAddress sender = request->getMacAddress();
     //com_->sendOnce(sender, echoResponseReq.get(), true);
-    this->router_->route(request, sender);
+    this->router_->route(echoResponseReq.get(), sender);
 }
 
 bool EchoHandler::canHandle(Request *request)
