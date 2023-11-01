@@ -1,7 +1,7 @@
 #include "handlers/echoResponseHandler.h"
 
-EchoResponseHandler::EchoResponseHandler(std::shared_ptr<RouterInterface> router)
-    : BaseHandler {router}
+EchoResponseHandler::EchoResponseHandler(std::shared_ptr<RouterInterface> router, std::shared_ptr<DeviceManager> deviceManager)
+    : BaseHandler {router, deviceManager}
 {
 
 }

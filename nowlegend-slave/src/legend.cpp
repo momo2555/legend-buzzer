@@ -15,12 +15,14 @@ Legend::Legend()
     aliveTimer_ =  new Timer();
 
     router_ = std::make_shared<RouterInterface>(RouterInterface(com_));
+    deviceManager_ = std::make_shared<DeviceManager>(DeviceManager());
     handlerManager_ = std::make_unique<HandlerManager>(HandlerManager(router_));
+    
 
-    auto echoResponseHandler = new EchoResponseHandler(router_);
-    auto messageHandler = new MessageHandler(router_);
-    auto heartbeatResponseHandler = new HeartbeatResponseHandler(router_);
-    auto identificationResponseHandler = new IdentificationResponseHandler(router_);
+    auto echoResponseHandler = new EchoResponseHandler(router_, deviceManager_);
+    auto messageHandler = new MessageHandler(router_, deviceManager_);
+    auto heartbeatResponseHandler = new HeartbeatResponseHandler(router_, deviceManager_);
+    auto identificationResponseHandler = new IdentificationResponseHandler(router_, deviceManager_);
 
     handlerManager_->addHandler(echoResponseHandler);
     handlerManager_->addHandler(messageHandler);

@@ -1,7 +1,7 @@
 #include "handlers/heartbeatResponseHandler.h"
 
-HeartbeatResponseHandler::HeartbeatResponseHandler(std::shared_ptr<RouterInterface> router)
-    : BaseHandler {router}
+HeartbeatResponseHandler::HeartbeatResponseHandler(std::shared_ptr<RouterInterface> router, std::shared_ptr<DeviceManager> deviceManager)
+    : BaseHandler {router, deviceManager}
 {
 
 }

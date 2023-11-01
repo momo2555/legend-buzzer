@@ -1,7 +1,7 @@
 #include "handlers/messageHandler.h"
 
-MessageHandler::MessageHandler(std::shared_ptr<RouterInterface> router)
-    : BaseHandler {router}
+MessageHandler::MessageHandler(std::shared_ptr<RouterInterface> router, std::shared_ptr<DeviceManager> deviceManager)
+    : BaseHandler {router, deviceManager}
 {
 
 }

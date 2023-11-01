@@ -6,7 +6,7 @@
 class MessageHandler : public BaseHandler 
 {
 public:
-    MessageHandler(std::shared_ptr<RouterInterface> router);
+    MessageHandler(std::shared_ptr<RouterInterface> router, std::shared_ptr<DeviceManager> deviceManager);
     void handle(Request *request) override;
     bool canHandle(Request *request) override;
 

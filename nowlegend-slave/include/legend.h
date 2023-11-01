@@ -60,6 +60,7 @@ class Legend {
         std::shared_ptr<Transmission> com_ {};
         std::unique_ptr<Request> req_ {};
         std::shared_ptr<RouterInterface> router_ {};
+        std::shared_ptr<DeviceManager> deviceManager_ {};
         std::unique_ptr<HandlerManager> handlerManager_ {};
 
         LegendStateMachine stateMachine_ {};

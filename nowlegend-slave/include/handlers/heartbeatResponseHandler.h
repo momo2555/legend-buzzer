@@ -6,7 +6,7 @@
 class HeartbeatResponseHandler : public BaseHandler 
 {
 public:
-    HeartbeatResponseHandler(std::shared_ptr<RouterInterface> router);
+    HeartbeatResponseHandler(std::shared_ptr<RouterInterface> router, std::shared_ptr<DeviceManager> deviceManager);
     void handle(Request *request) override;
     bool canHandle(Request *request) override;
 

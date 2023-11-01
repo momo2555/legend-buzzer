@@ -6,7 +6,7 @@
 class IdentificationHandler : public BaseHandler 
 {
 public:
-    IdentificationHandler(std::shared_ptr<RouterInterface> router);
+    IdentificationHandler(std::shared_ptr<RouterInterface> router, std::shared_ptr<DeviceManager> deviceManager);
     void handle(Request *request);
     bool canHandle(Request *request);
 

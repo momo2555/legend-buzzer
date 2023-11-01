@@ -25,6 +25,7 @@ private:
     
     std::shared_ptr<Transmission> com_ {};
     std::shared_ptr<RouterInterface> router_ {};
+    std::shared_ptr<DeviceManager> deviceManager_ {};
     std::unique_ptr<HandlerManager> handlerManager_ {};
 
 
