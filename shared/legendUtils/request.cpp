@@ -57,9 +57,20 @@ void Request::asIdentification()
 /*
     as identification response
 */
-void Request::asIdentificationResponse(identificationResult result)
+void Request::asIdentificationResponse(IdentificationResult result)
 {
     requestBody_.header.type = RequestType::CONFIRM_IDENTITY;
+    setData<int>("res", result);
+}
+
+IdentificationResult Request::getIdentifactionResult()
+{
+    if(getType() == RequestType::CONFIRM_IDENTITY) {
+        int res = std::get<int>(getDataAt(0).value); 
+        return static_cast<IdentificationResult>(res);
+        
+    }
+    return IdentificationResult::ERROR;
 }
 
 /*

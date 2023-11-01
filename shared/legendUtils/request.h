@@ -26,10 +26,11 @@ enum Entity : std::uint8_t
     NONE
 
 };
-enum identificationResult : uint8_t
+enum IdentificationResult : int
 {
     ACCEPTED = 0,
-    REFUSED
+    REFUSED,
+    ERROR
 };
 enum RequestType : std::uint8_t
 {
@@ -122,7 +123,8 @@ public:
     /*
         as identification request
     */
-    void asIdentificationResponse(identificationResult result);
+    void asIdentificationResponse(IdentificationResult result);
+    IdentificationResult getIdentifactionResult();
 
     /*
         as echo request

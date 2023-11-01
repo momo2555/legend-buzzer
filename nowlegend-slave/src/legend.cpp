@@ -7,6 +7,10 @@ Legend::Legend()
     com_ = std::make_shared<Transmission>(Transmission());
     macAddressToIntArray(WiFi.macAddress().c_str(), myAddr_.data());
 
+    //init the state machine
+    stateMachine_ = new LegendStateMachine();
+    stateMachine_->transmissionState = TransmissionState::ECHO_STANDBY;
+    stateMachine_->masterRegistered = false;
 
     echoTimer_ = new Timer();
     identificationTimer_ =  new Timer();
@@ -17,10 +21,10 @@ Legend::Legend()
     handlerManager_ = std::make_unique<HandlerManager>(HandlerManager(router_));
     
 
-    auto echoResponseHandler = new EchoResponseHandler(router_, deviceManager_, &stateMachine_);
+    auto echoResponseHandler = new EchoResponseHandler(router_, deviceManager_, stateMachine_);
     auto messageHandler = new MessageHandler(router_, deviceManager_);
     auto heartbeatResponseHandler = new HeartbeatResponseHandler(router_, deviceManager_);
-    auto identificationResponseHandler = new IdentificationResponseHandler(router_, deviceManager_, &stateMachine_);
+    auto identificationResponseHandler = new IdentificationResponseHandler(router_, deviceManager_, stateMachine_);
 
     handlerManager_->addHandler(echoResponseHandler);
     handlerManager_->addHandler(messageHandler);
@@ -45,7 +49,7 @@ void Legend::run()
         Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
         Serial.println("frame sent");
     });
-    stateMachine_.transmissionState = TransmissionState::ECHO_STANDBY;
+    
     createSubProcess_();
 }
 
@@ -78,7 +82,7 @@ void Legend::dataRecvCallback_(const unsigned char *addr, const unsigned char *d
 void Legend::subProcess()
 {
     if(!isSubprocessLaunched) isSubprocessLaunched = true;
-    switch (stateMachine_.transmissionState)
+    switch (stateMachine_->transmissionState)
     {
     case TransmissionState::ECHO_STANDBY:
         // Send every second an echo
@@ -94,6 +98,7 @@ void Legend::subProcess()
         // Send identification frame
         if (identificationTimer_->isElapsed(2000))
         {
+            Serial.println("before send id frame");
             identificationTimer_->timer();
             sendIdentificationFrame_();
         }
@@ -116,11 +121,11 @@ void Legend::subProcess()
 }
 bool Legend::isMasterRegistered_()
 {
-    return stateMachine_.masterRegistered;
+    return stateMachine_->masterRegistered;
 }
 void Legend::sendIdentificationFrame_()
 {
-    if (isMasterRegistered_() && stateMachine_.transmissionState == TransmissionState::IDENTIFICATION_STATE)
+    if (isMasterRegistered_() && stateMachine_->transmissionState == TransmissionState::IDENTIFICATION_STATE)
     {
         auto identifyReq = std::make_unique<Request>(Request());
         identifyReq->asIdentification();
@@ -129,6 +134,7 @@ void Legend::sendIdentificationFrame_()
         MacAddress masterAddr = deviceManager_->getMaster().address;
         identifyReq->setSender(Entity::DEVICE, myAddress);
         identifyReq->setReceiver(Entity::MASTER, {});
+        com_->registerPeer(masterAddr.data());
         com_->send(masterAddr, identifyReq.get());
     }
 }
@@ -136,7 +142,7 @@ void Legend::sendEchoFrame_()
 {
     Serial.println("send echo frame");
     // broadcast an echo message
-    if (!isMasterRegistered_() && stateMachine_.transmissionState == TransmissionState::ECHO_STANDBY)
+    if (!isMasterRegistered_() && stateMachine_->transmissionState == TransmissionState::ECHO_STANDBY)
     {   
         Serial.println("send echo");
         auto echoReq = std::make_unique<Request>(Request());
@@ -153,7 +159,7 @@ void Legend::sendEchoFrame_()
 }
 void Legend::sendAliveFrame_() {
     Serial.println("send identification frame");
-    if (isMasterRegistered_() && stateMachine_.transmissionState == TransmissionState::READY_STATE)
+    if (isMasterRegistered_() && stateMachine_->transmissionState == TransmissionState::READY_STATE)
     {
         auto identifyReq = std::make_unique<Request>(Request());
         /*identifyReq->as();

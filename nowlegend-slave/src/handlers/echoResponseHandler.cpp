@@ -1,9 +1,9 @@
 #include "handlers/echoResponseHandler.h"
 
 EchoResponseHandler::EchoResponseHandler(std::shared_ptr<RouterInterface> router, std::shared_ptr<DeviceManager> deviceManager, LegendStateMachine* stateMachine)
-    : BaseHandler {router, deviceManager},
-    stateMachine(stateMachine)
+    : BaseHandler {router, deviceManager}
 {
+    this->stateMachine = stateMachine;
 
 }
 

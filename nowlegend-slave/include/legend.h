@@ -54,7 +54,7 @@ class Legend {
         std::shared_ptr<DeviceManager> deviceManager_ {};
         std::unique_ptr<HandlerManager> handlerManager_ {};
 
-        LegendStateMachine stateMachine_ {};
+        LegendStateMachine *stateMachine_ {};
         MacAddress myAddr_ {};
         MacAddress masterAddr_ {};
 
