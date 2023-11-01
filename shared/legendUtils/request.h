@@ -22,7 +22,8 @@ enum Entity : std::uint8_t
     MONITOR = 0,
     CONTROLLER,
     DEVICE,
-    MASTER
+    MASTER,
+    NONE
 
 };
 enum identificationResult : uint8_t
@@ -54,7 +55,8 @@ struct RequestHeader
     uint8_t dataLength{0};
     Entity from{};
     Entity to{};
-    std::array<uint8_t, STR_MAC_LEN> mac{};
+    MacAddress senderAddress{};
+    MacAddress receiverAddress{};
     char device[STR_DEVICE_LEN]{""};
 };
 
@@ -83,10 +85,10 @@ public:
     Request();
     Request(const unsigned char *rawData, int size);
     ~Request(){};
-    void setReceiver(Entity receiver);
-    void setSender(Entity sender);
+    void setReceiver(Entity receiver, MacAddress receiverAddress);
+    void setSender(Entity sender, MacAddress senderAddress);
     void setDeviceName(const char *name);
-    void setMacAddress(std::array<uint8_t, STR_MAC_LEN> macAddress);
+    //void setMacAddress(std::array<uint8_t, STR_MAC_LEN> macAddress);
 
     /*
         A request of type event
@@ -151,11 +153,13 @@ public:
     RequestDataType getDataType(bool data) { return RequestDataType::BOOL; }
 
     RequestType getType();
-    Entity getReceiver();
-    Entity getSender();
+    Entity getReceiverType();
+    Entity getSenderType();
+    MacAddress getReceiverAddress();
+    MacAddress getSenderAddress();
     char *getDeviceName();
     RequestData getDataAt(uint8_t index);
-    MacAddress getMacAddress(){return requestBody_.header.mac;};
+    //MacAddress getMacAddress(){return requestBody_.header.mac;};
 
 private:
     std::string entityToString_(Entity entity);

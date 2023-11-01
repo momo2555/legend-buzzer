@@ -13,6 +13,7 @@
 
 #include "handlerManager.h"
 #include "routerInterface.h"
+#include "stateMachine.h"
 #include "handlers/echoResponseHandler.h"
 #include "handlers/heartbeatResponseHandler.h"
 #include "handlers/identificationResponseHandler.h"
@@ -21,16 +22,6 @@
 typedef Timer* TimerPtr;
 
 void legendTask (void * param);
-enum TransmissionState {
-    ECHO_STANDBY = 0,
-    IDENTIFICATION_STATE,
-    READY_STATE,
-};
-
-struct LegendStateMachine {
-    TransmissionState transmissionState {ECHO_STANDBY};
-    bool masterRegistered {false};
-};
 
 class Legend {
     public:

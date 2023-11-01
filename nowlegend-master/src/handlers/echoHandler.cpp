@@ -13,12 +13,10 @@ void EchoHandler::handle(Request *request)
     echoResponseReq->asEchoResponse();
     MacAddress myAddress{};
     macAddressToIntArray(WiFi.macAddress().c_str(), myAddress.data());
-    echoResponseReq->setMacAddress(myAddress);
-    echoResponseReq->setSender(Entity::MASTER);
-    echoResponseReq->setReceiver(Entity::DEVICE);
-
     MacAddress sender = request->getMacAddress();
     //com_->sendOnce(sender, echoResponseReq.get(), true);
+    echoResponseReq->setSender(Entity::MASTER, sender);
+    echoResponseReq->setReceiver(Entity::DEVICE, myAddress);
     this->router_->route(echoResponseReq.get(), sender);
 }
 

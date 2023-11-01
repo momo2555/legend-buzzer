@@ -8,9 +8,11 @@ IdentificationHandler::IdentificationHandler(std::shared_ptr<RouterInterface> ro
 
 void IdentificationHandler::handle(Request *request)
 {
+    Serial.println("Receive identification request");
 }
 
 bool IdentificationHandler::canHandle(Request *request)
 {
     return request->getType() == RequestType::IDENTIFICATION;
 }
+

@@ -5,10 +5,8 @@ TaskHandle_t subProc;
 Legend::Legend()
 {
     com_ = std::make_shared<Transmission>(Transmission());
-    req_ = std::make_unique<Request>(Request());
-
     macAddressToIntArray(WiFi.macAddress().c_str(), myAddr_.data());
-    req_->setMacAddress(myAddr_);
+
 
     echoTimer_ = new Timer();
     identificationTimer_ =  new Timer();
@@ -19,10 +17,10 @@ Legend::Legend()
     handlerManager_ = std::make_unique<HandlerManager>(HandlerManager(router_));
     
 
-    auto echoResponseHandler = new EchoResponseHandler(router_, deviceManager_);
+    auto echoResponseHandler = new EchoResponseHandler(router_, deviceManager_, &stateMachine_);
     auto messageHandler = new MessageHandler(router_, deviceManager_);
     auto heartbeatResponseHandler = new HeartbeatResponseHandler(router_, deviceManager_);
-    auto identificationResponseHandler = new IdentificationResponseHandler(router_, deviceManager_);
+    auto identificationResponseHandler = new IdentificationResponseHandler(router_, deviceManager_, &stateMachine_);
 
     handlerManager_->addHandler(echoResponseHandler);
     handlerManager_->addHandler(messageHandler);
@@ -128,8 +126,10 @@ void Legend::sendIdentificationFrame_()
         identifyReq->asIdentification();
         MacAddress myAddress{};
         macAddressToIntArray(WiFi.macAddress().c_str(), myAddress.data());
-        identifyReq->setMacAddress(myAddress);
-        com_->send(masterAddr_, identifyReq.get());
+        MacAddress masterAddr = deviceManager_->getMaster().address;
+        identifyReq->setSender(Entity::DEVICE, myAddress);
+        identifyReq->setReceiver(Entity::MASTER, {});
+        com_->send(masterAddr, identifyReq.get());
     }
 }
 void Legend::sendEchoFrame_()
@@ -143,7 +143,7 @@ void Legend::sendEchoFrame_()
         echoReq->asEcho();
         MacAddress myAddress{};
         macAddressToIntArray(WiFi.macAddress().c_str(), myAddress.data());
-        echoReq->setMacAddress(myAddress);
+        echoReq->setSender(Entity::DEVICE, myAddress);
         //MacAddress emptyAddr {};
         //com_->send(emptyAddr, echoReq.get(), SendMethod::BROADCAST);
         MacAddress emptyAddr {};
@@ -152,6 +152,7 @@ void Legend::sendEchoFrame_()
     }
 }
 void Legend::sendAliveFrame_() {
+    Serial.println("send identification frame");
     if (isMasterRegistered_() && stateMachine_.transmissionState == TransmissionState::READY_STATE)
     {
         auto identifyReq = std::make_unique<Request>(Request());

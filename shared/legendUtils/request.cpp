@@ -10,23 +10,27 @@ Request::Request(const unsigned char *rawData, int size)
     memmove(&requestBody_, rawData, sizeof(requestBody_));
     globalIndex_ = requestBody_.header.dataLength;
 }
-void Request::setReceiver(Entity receiver)
+void Request::setReceiver(Entity receiver, MacAddress receiverAddress)
 {
     requestBody_.header.to = receiver;
+    requestBody_.header.receiverAddress = receiverAddress;
 }
-void Request::setSender(Entity sender)
+void Request::setSender(Entity sender, MacAddress senderAddress)
 {
     requestBody_.header.from = sender;
+    requestBody_.header.senderAddress = senderAddress;
 }
 void Request::setDeviceName(const char *name)
 {
     strncpy(requestBody_.header.device, name, STR_DEVICE_LEN);
     // header_.device = name;
 }
-void Request::setMacAddress(std::array<uint8_t, STR_MAC_LEN> macAddress)
-{
-    requestBody_.header.mac = macAddress;
-}
+
+
+// void Request::setMacAddress(std::array<uint8_t, STR_MAC_LEN> macAddress)
+// {
+//     requestBody_.header.mac = macAddress;
+// }
 
 /*
     A request of type event
@@ -160,14 +164,22 @@ RequestType Request::getType()
 {
     return requestBody_.header.type;
 }
-Entity Request::getReceiver()
+Entity Request::getReceiverType()
 {
     return requestBody_.header.to;
 }
-Entity Request::getSender()
+Entity Request::getSenderType()
 {
     return requestBody_.header.from;
 }
+
+MacAddress Request::getReceiverAddress() {
+    return requestBody_.header.receiverAddress;
+}
+MacAddress Request::getSenderAddress() {
+    return requestBody_.header.senderAddress;
+}
+
 char *Request::getDeviceName()
 {
 }
