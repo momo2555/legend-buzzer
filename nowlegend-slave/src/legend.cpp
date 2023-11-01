@@ -4,15 +4,28 @@ TaskHandle_t subProc;
 
 Legend::Legend()
 {
-    com_ = std::make_unique<Transmission>(Transmission());
+    com_ = std::make_shared<Transmission>(Transmission());
     req_ = std::make_unique<Request>(Request());
 
     macAddressToIntArray(WiFi.macAddress().c_str(), myAddr_.data());
     req_->setMacAddress(myAddr_);
 
-    echoTimer_ = std::make_unique<Timer>(Timer());
-    identificationTimer_ = std::make_unique<Timer>(Timer());
-    aliveTimer_ = std::make_unique<Timer>(Timer());
+    echoTimer_ = new Timer();
+    identificationTimer_ =  new Timer();
+    aliveTimer_ =  new Timer();
+
+    router_ = std::make_shared<RouterInterface>(RouterInterface(com_));
+    handlerManager_ = std::make_unique<HandlerManager>(HandlerManager(router_));
+
+    auto echoResponseHandler = new EchoResponseHandler(router_);
+    auto messageHandler = new MessageHandler(router_);
+    auto heartbeatResponseHandler = new HeartbeatResponseHandler(router_);
+    auto identificationResponseHandler = new IdentificationResponseHandler(router_);
+
+    handlerManager_->addHandler(echoResponseHandler);
+    handlerManager_->addHandler(messageHandler);
+    handlerManager_->addHandler(heartbeatResponseHandler);
+    handlerManager_->addHandler(identificationResponseHandler);
 }
 
 void Legend::enableConfiguration()
@@ -38,6 +51,7 @@ void Legend::run()
 
 void Legend::createSubProcess_()
 {
+    Serial.println("Create sub process");
     if (!isSubprocessLaunched)
     {
         initAllTimers_();
@@ -56,25 +70,9 @@ void Legend::createSubProcess_()
 void Legend::dataRecvCallback_(const unsigned char *addr, const unsigned char *data, int size)
 {
 
+    Serial.println("receive data");
     auto receivedRequest = std::make_unique<Request>(Request(data, size));
-    switch (receivedRequest->getType())
-    {
-    case RequestType::ECHO_RESPONSE: // STEP 1
-        // receive the echo response : save the master address and send identification
-        Serial.println("receive response echo ");
-        break;
-    case RequestType::CONFIRM_IDENTITY: // STEP 2
-        // The master confirm the identification
-        break;
-    case RequestType::DEVICE_DATA:
-        // Receive new data
-        break;
-    case RequestType::DEVICE_EVENT:
-        // receive a new event
-        break;
-    default:
-        break;
-    }
+    this->handlerManager_->handleRequest(receivedRequest.get());
 }
 
 void Legend::subProcess()
@@ -86,6 +84,7 @@ void Legend::subProcess()
         // Send every second an echo
         if (echoTimer_->isElapsed(1000))
         {
+            Serial.println("before send echo frame");
             echoTimer_->timer();
             sendEchoFrame_();
         }
@@ -133,6 +132,7 @@ void Legend::sendIdentificationFrame_()
 }
 void Legend::sendEchoFrame_()
 {
+    Serial.println("send echo frame");
     // broadcast an echo message
     if (!isMasterRegistered_() && stateMachine_.transmissionState == TransmissionState::ECHO_STANDBY)
     {   
@@ -170,6 +170,7 @@ void Legend::initAllTimers_()
 
 void legendTask(void *param)
 {
+    Serial.println("run legend loop");
     while (true)
     {
         //Serial.println("coucou you ");

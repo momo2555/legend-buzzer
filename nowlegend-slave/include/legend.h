@@ -11,7 +11,14 @@
 #include <fct_utils.h>
 #include <timer.h>
 
-typedef std::unique_ptr<Timer> TimerPtr;
+#include "handlerManager.h"
+#include "routerInterface.h"
+#include "handlers/echoResponseHandler.h"
+#include "handlers/heartbeatResponseHandler.h"
+#include "handlers/identificationResponseHandler.h"
+#include "handlers/messageHandler.h"
+
+typedef Timer* TimerPtr;
 
 void legendTask (void * param);
 enum TransmissionState {
@@ -50,8 +57,11 @@ class Legend {
         
         
         
-        std::unique_ptr<Transmission> com_ {};
+        std::shared_ptr<Transmission> com_ {};
         std::unique_ptr<Request> req_ {};
+        std::shared_ptr<RouterInterface> router_ {};
+        std::unique_ptr<HandlerManager> handlerManager_ {};
+
         LegendStateMachine stateMachine_ {};
         MacAddress myAddr_ {};
         MacAddress masterAddr_ {};

@@ -11,7 +11,7 @@ class Timer {
         bool isElapsed(int time);
 
     private:
-        int stamp_ {};
+        unsigned long stamp_ {};
 
 
 };

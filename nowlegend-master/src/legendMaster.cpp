@@ -5,7 +5,7 @@ LegendMaster::LegendMaster() {
     this->com_->initTransmission();
     router_ = std::make_shared<RouterInterface>(RouterInterface(com_));
     handlerManager_ = std::make_unique<HandlerManager>(HandlerManager(router_));
-    //echo Handler
+    //Handlers
     auto echoHandler = new EchoHandler(router_);
     auto messageHandler = new MessageHandler(router_);
     auto identificationHandler = new IdentificationHandler(router_);
@@ -15,6 +15,7 @@ LegendMaster::LegendMaster() {
     handlerManager_->addHandler(messageHandler);
     handlerManager_->addHandler(identificationHandler);
     handlerManager_->addHandler(heartbeatHandler);
+    
 }
 
 void LegendMaster::run() {

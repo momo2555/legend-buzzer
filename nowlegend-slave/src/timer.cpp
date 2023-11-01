@@ -12,6 +12,7 @@ int Timer::getLast() {
     return stamp_;
 }
 bool Timer::isElapsed(int time) {
-        return millis() - stamp_  > time;
+    int diff = millis() - stamp_;
+    return diff  > time;
    
 }
