@@ -7,7 +7,7 @@
 class IdentificationResponseHandler : public BaseHandler 
 {
 public:
-    IdentificationResponseHandler(std::shared_ptr<RouterInterface> router, std::shared_ptr<DeviceManager> deviceManager, LegendStateMachine* stateMachine);
+    IdentificationResponseHandler(std::shared_ptr<Router> router, std::shared_ptr<DeviceManager> deviceManager, LegendStateMachine* stateMachine);
     void handle(Request *request) override;
     bool canHandle(Request *request) override;
 private:

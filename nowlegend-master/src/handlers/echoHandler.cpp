@@ -1,6 +1,6 @@
 #include "handlers/echoHandler.h"
 
-EchoHandler::EchoHandler(std::shared_ptr<RouterInterface> router, std::shared_ptr<DeviceManager> deviceManager)
+EchoHandler::EchoHandler(std::shared_ptr<Router> router, std::shared_ptr<DeviceManager> deviceManager)
     : BaseHandler {router, deviceManager}
 {
 

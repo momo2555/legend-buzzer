@@ -1,6 +1,6 @@
 #include "handlers/identificationHandler.h"
 
-IdentificationHandler::IdentificationHandler(std::shared_ptr<RouterInterface> router, std::shared_ptr<DeviceManager> deviceManager)
+IdentificationHandler::IdentificationHandler(std::shared_ptr<Router> router, std::shared_ptr<DeviceManager> deviceManager)
     : BaseHandler {router, deviceManager}
 {
 

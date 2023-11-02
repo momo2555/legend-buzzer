@@ -1,6 +1,6 @@
 #include "baseHandler.h"
 
-BaseHandler::BaseHandler(std::shared_ptr<RouterInterface> router, std::shared_ptr<DeviceManager> deviceManager)
+BaseHandler::BaseHandler(std::shared_ptr<Router> router, std::shared_ptr<DeviceManager> deviceManager)
 {
     this->router_ = router;
     this->deviceManager_ = deviceManager;

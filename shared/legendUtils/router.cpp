@@ -1,11 +1,11 @@
-#include "routerInterface.h"
+#include "router.h"
 
-RouterInterface::RouterInterface(std::shared_ptr<Transmission> com)
+Router::Router(std::shared_ptr<Transmission> com)
 {
     this->com_ = com;
 }
 
-void RouterInterface::route(Request *request, MacAddress address)
+void Router::route(Request *request, MacAddress address)
 {
     Serial.println("Router : Route the request");   
     if(request->getReceiverType() == Entity::DEVICE) {
@@ -18,4 +18,11 @@ void RouterInterface::route(Request *request, MacAddress address)
     }else {
         Serial.println("Router : Reciver unknown");
     }
+}
+
+MacAddress Router::getMyAddress()
+{
+    MacAddress myAddress{};
+    macAddressToIntArray(WiFi.macAddress().c_str(), myAddress.data());
+    return myAddress;
 }

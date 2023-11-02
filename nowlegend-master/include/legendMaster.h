@@ -3,7 +3,7 @@
 
 #include "transmission.h"
 #include "request.h"
-#include "routerInterface.h"
+#include "router.h"
 #include "handlerManager.h"
 #include "handlers/echoHandler.h"
 #include "handlers/identificationHandler.h"
@@ -24,7 +24,7 @@ private:
     void dataRecvCallback_(const unsigned char *addr, const unsigned char *data, int size);
     
     std::shared_ptr<Transmission> com_ {};
-    std::shared_ptr<RouterInterface> router_ {};
+    std::shared_ptr<Router> router_ {};
     std::shared_ptr<DeviceManager> deviceManager_ {};
     std::unique_ptr<HandlerManager> handlerManager_ {};
 

@@ -12,7 +12,7 @@
 #include <timer.h>
 
 #include "handlerManager.h"
-#include "routerInterface.h"
+#include "router.h"
 #include "stateMachine.h"
 #include "handlers/echoResponseHandler.h"
 #include "handlers/heartbeatResponseHandler.h"
@@ -50,7 +50,7 @@ class Legend {
         
         std::shared_ptr<Transmission> com_ {};
         std::unique_ptr<Request> req_ {};
-        std::shared_ptr<RouterInterface> router_ {};
+        std::shared_ptr<Router> router_ {};
         std::shared_ptr<DeviceManager> deviceManager_ {};
         std::unique_ptr<HandlerManager> handlerManager_ {};
 

@@ -4,7 +4,7 @@ LegendMaster::LegendMaster() {
     this->com_ = std::make_shared<Transmission>(Transmission());
     this->com_->initTransmission();
 
-    router_ = std::make_shared<RouterInterface>(RouterInterface(com_));
+    router_ = std::make_shared<Router>(Router(com_));
     deviceManager_ = std::make_shared<DeviceManager>(DeviceManager());
     handlerManager_ = std::make_unique<HandlerManager>(HandlerManager(router_));
     //Handlers

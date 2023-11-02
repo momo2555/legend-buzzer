@@ -16,7 +16,7 @@ Legend::Legend()
     identificationTimer_ =  new Timer();
     aliveTimer_ =  new Timer();
 
-    router_ = std::make_shared<RouterInterface>(RouterInterface(com_));
+    router_ = std::make_shared<Router>(Router(com_));
     deviceManager_ = std::make_shared<DeviceManager>(DeviceManager());
     handlerManager_ = std::make_unique<HandlerManager>(HandlerManager(router_));
     
@@ -133,7 +133,7 @@ void Legend::sendIdentificationFrame_()
         macAddressToIntArray(WiFi.macAddress().c_str(), myAddress.data());
         MacAddress masterAddr = deviceManager_->getMaster().address;
         identifyReq->setSender(Entity::DEVICE, myAddress);
-        identifyReq->setReceiver(Entity::MASTER, {});
+        identifyReq->setReceiver(Entity::MASTER, masterAddr);
         com_->registerPeer(masterAddr.data());
         com_->send(masterAddr, identifyReq.get());
     }
@@ -161,12 +161,15 @@ void Legend::sendAliveFrame_() {
     Serial.println("send identification frame");
     if (isMasterRegistered_() && stateMachine_->transmissionState == TransmissionState::READY_STATE)
     {
-        auto identifyReq = std::make_unique<Request>(Request());
-        /*identifyReq->as();
+        auto heartbeatReq = std::make_unique<Request>(Request());
+        heartbeatReq->asHeartbeat();
         MacAddress myAddress{};
         macAddressToIntArray(WiFi.macAddress().c_str(), myAddress.data());
-        identifyReq->setMacAddress(myAddress);
-        com_->send(masterAddr_, identifyReq.get());*/
+        MacAddress masterAddr = deviceManager_->getMaster().address;
+        heartbeatReq->setSender(Entity::DEVICE, myAddress);
+        heartbeatReq->setReceiver(Entity::MASTER, masterAddr);
+        com_->registerPeer(masterAddr.data());
+        com_->send(masterAddr_, heartbeatReq.get());
     }
 }
 

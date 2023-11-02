@@ -1,6 +1,6 @@
 #include "handlerManager.h"
 
-HandlerManager::HandlerManager(std::shared_ptr<RouterInterface> router)
+HandlerManager::HandlerManager(std::shared_ptr<Router> router)
 {
     
     

@@ -1,6 +1,6 @@
 #include "handlers/identificationResponseHandler.h"
 
-IdentificationResponseHandler::IdentificationResponseHandler(std::shared_ptr<RouterInterface> router, std::shared_ptr<DeviceManager> deviceManager, LegendStateMachine* stateMachine)
+IdentificationResponseHandler::IdentificationResponseHandler(std::shared_ptr<Router> router, std::shared_ptr<DeviceManager> deviceManager, LegendStateMachine* stateMachine)
     : BaseHandler {router, deviceManager}
 {
     this->stateMachine = stateMachine;

@@ -4,10 +4,10 @@
 #include "transmission.h"
 #include "request.h"
 
-class RouterInterface 
+class Router 
 {
 public:
-    RouterInterface(std::shared_ptr<Transmission> com);
+    Router(std::shared_ptr<Transmission> com);
     void route(Request *request, MacAddress address);
 private:
     std::shared_ptr<Transmission> com_ {};
