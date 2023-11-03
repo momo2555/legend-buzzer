@@ -125,12 +125,12 @@ bool Legend::isMasterRegistered_()
 }
 void Legend::sendIdentificationFrame_()
 {
+    Serial.println("send identification frame");
     if (isMasterRegistered_() && stateMachine_->transmissionState == TransmissionState::IDENTIFICATION_STATE)
     {
         auto identifyReq = std::make_unique<Request>(Request());
         identifyReq->asIdentification();
-        MacAddress myAddress{};
-        macAddressToIntArray(WiFi.macAddress().c_str(), myAddress.data());
+        MacAddress myAddress {Transmission::getMyAddress()};
         MacAddress masterAddr = deviceManager_->getMaster().address;
         identifyReq->setSender(Entity::DEVICE, myAddress);
         identifyReq->setReceiver(Entity::MASTER, masterAddr);
@@ -141,14 +141,12 @@ void Legend::sendIdentificationFrame_()
 void Legend::sendEchoFrame_()
 {
     Serial.println("send echo frame");
-    // broadcast an echo message
     if (!isMasterRegistered_() && stateMachine_->transmissionState == TransmissionState::ECHO_STANDBY)
     {   
         Serial.println("send echo");
         auto echoReq = std::make_unique<Request>(Request());
         echoReq->asEcho();
-        MacAddress myAddress{};
-        macAddressToIntArray(WiFi.macAddress().c_str(), myAddress.data());
+        MacAddress myAddress {Transmission::getMyAddress()};
         echoReq->setSender(Entity::DEVICE, myAddress);
         //MacAddress emptyAddr {};
         //com_->send(emptyAddr, echoReq.get(), SendMethod::BROADCAST);
@@ -158,18 +156,19 @@ void Legend::sendEchoFrame_()
     }
 }
 void Legend::sendAliveFrame_() {
-    Serial.println("send identification frame");
+    Serial.println("send heartbeat frame");
     if (isMasterRegistered_() && stateMachine_->transmissionState == TransmissionState::READY_STATE)
     {
+        
         auto heartbeatReq = std::make_unique<Request>(Request());
         heartbeatReq->asHeartbeat();
-        MacAddress myAddress{};
-        macAddressToIntArray(WiFi.macAddress().c_str(), myAddress.data());
+        MacAddress myAddress {Transmission::getMyAddress()};
         MacAddress masterAddr = deviceManager_->getMaster().address;
         heartbeatReq->setSender(Entity::DEVICE, myAddress);
         heartbeatReq->setReceiver(Entity::MASTER, masterAddr);
-        com_->registerPeer(masterAddr.data());
-        com_->send(masterAddr_, heartbeatReq.get());
+        Serial.println("before sending hertbeat");
+        //com_->registerPeer(masterAddr.data());
+        com_->send(masterAddr, heartbeatReq.get());
     }
 }
 

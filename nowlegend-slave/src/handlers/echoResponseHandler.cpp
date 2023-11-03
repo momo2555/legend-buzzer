@@ -21,7 +21,6 @@ void EchoResponseHandler::handle(Request *request)
 
 bool EchoResponseHandler::canHandle(Request *request)
 {
-    Serial.println("ECHO CAN HANDLE");
     return request->getType() == RequestType::ECHO_RESPONSE;
     
 }

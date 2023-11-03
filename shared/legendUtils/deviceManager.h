@@ -2,6 +2,7 @@
 #define DEVICE_MANAGEER_H
 
 #include "request.h"
+#include "timer.h"
 
 enum ConnectionState {
     PEERED,
@@ -16,9 +17,11 @@ enum AddDeviceError {
 };
 
 struct Device {
-    MacAddress address;
-    ConnectionState state;
-    Entity type;
+    MacAddress address {};
+    ConnectionState state {};
+    Entity type {};
+    Timer aliveTimer {};
+    
 };
 
 class DeviceManager {

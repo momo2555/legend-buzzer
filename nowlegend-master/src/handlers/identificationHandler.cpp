@@ -22,6 +22,7 @@ void IdentificationHandler::handle(Request *request)
     if(this->deviceManager_->isDeviceExist(deviceAddr)) {
         Device device = this->deviceManager_->getDevice(deviceAddr);
         device.state = ConnectionState::CONNECTED;
+        device.aliveTimer.timer();
         this->deviceManager_->updateDevice(deviceAddr, device);
     }
     this->router_->route(IdentifyResponseReq.get(), deviceAddr);

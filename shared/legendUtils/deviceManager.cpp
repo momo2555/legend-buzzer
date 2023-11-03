@@ -11,6 +11,7 @@ AddDeviceError DeviceManager::addNewDevice(MacAddress address)
             address,
             ConnectionState::PEERED,
             Entity::DEVICE,
+            Timer()
         });
         return AddDeviceError::INSERT_SUCCESS;
     }else {
@@ -26,6 +27,7 @@ AddDeviceError DeviceManager::addMaster(MacAddress address)
                 address,
                 ConnectionState::PEERED,
                 Entity::MASTER,
+                Timer()
             });
             return AddDeviceError::INSERT_SUCCESS;
         }else {

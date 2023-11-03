@@ -19,10 +19,3 @@ void Router::route(Request *request, MacAddress address)
         Serial.println("Router : Reciver unknown");
     }
 }
-
-MacAddress Router::getMyAddress()
-{
-    MacAddress myAddress{};
-    macAddressToIntArray(WiFi.macAddress().c_str(), myAddress.data());
-    return myAddress;
-}

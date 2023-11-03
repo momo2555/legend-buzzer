@@ -77,7 +77,14 @@ void Transmission::deletePeer(std::string address)
     macAddressToIntArray(address, intAddress);
     deletePeer(intAddress);
 }
-bool Transmission::isPeerRegistered(uint8_t address[]) {
+MacAddress Transmission::getMyAddress()
+{
+    MacAddress myAddress{};
+    macAddressToIntArray(WiFi.macAddress().c_str(), myAddress.data());
+    return myAddress;
+}
+bool Transmission::isPeerRegistered(uint8_t address[])
+{
     bool exist = false;
     for (uint8_t i = 0; i < peerIndex; i++)
     {

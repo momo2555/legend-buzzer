@@ -8,7 +8,24 @@ HeartbeatResponseHandler::HeartbeatResponseHandler(std::shared_ptr<Router> route
 
 void HeartbeatResponseHandler::handle(Request *request)
 {
-   
+   Serial.println("Receive heartbeat response request");
+
+    MacAddress deviceAddr{request->getSenderAddress()};
+
+
+    //update device (set as connected)
+    if(this->deviceManager_->containMaster()) {
+        Device master {this->deviceManager_->getMaster()};
+        if(master.address == deviceAddr) {
+            if(this->deviceManager_->isDeviceExist(deviceAddr)) {
+                Serial.println("Master connection is OK");
+                master.aliveTimer.timer();
+                this->deviceManager_->updateDevice(deviceAddr, master);
+            }
+        }
+        
+    }
+    
 }
 
 bool HeartbeatResponseHandler::canHandle(Request *request)

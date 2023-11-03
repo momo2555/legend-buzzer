@@ -59,7 +59,8 @@
 
           bool isNewMessage() {return newMessage;};
           uint8_t getPeerInex() {return peerIndex;};
-          std::string getMyAddress(){return myStrAddress;};
+          //std::string getMyAddress(){return myStrAddress;};
+          static MacAddress getMyAddress();
           bool isPeerRegistered(uint8_t address[]);
           
           

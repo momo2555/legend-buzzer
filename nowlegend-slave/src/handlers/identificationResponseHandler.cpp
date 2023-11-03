@@ -17,6 +17,7 @@ void IdentificationResponseHandler::handle(Request *request)
             if (res == IdentificationResult::ACCEPTED) {
                 Serial.println("Identification accepted");
                 master.state = ConnectionState::CONNECTED;
+                master.aliveTimer.timer();
                 this->deviceManager_->updateDevice(master.address, master);
                 //update the state machine
                 this->stateMachine->transmissionState = TransmissionState::READY_STATE;
