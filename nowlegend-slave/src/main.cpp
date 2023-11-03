@@ -44,5 +44,14 @@ void setup() {
 }
 
 void loop() {
-  delay(1000);
+  if (legend->isReady()) {
+    delay(5000);
+    // create a new request
+    Request request {};
+    request.asEvent("coucou");
+    legend->sendRequest(request, Entity::MONITOR);
+    Serial.println("I'm ready - send event");
+    
+  }
+  
 }

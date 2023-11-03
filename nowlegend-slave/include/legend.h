@@ -26,29 +26,19 @@ void legendTask (void * param);
 class Legend {
     public:
         Legend();
-        void enableConfiguration();
-        void disableConfiguration();
-        //void setDefaultPassword(std::string& password);
-        //void setDefaultSSID(std::string& ssid);
-
         void run();
         bool isReady();
         void subProcess();
-
+        void sendRequest(Request request, Entity receiver);
 
     private:
         void createSubProcess_ ();
-        
         void sendIdentificationFrame_ ();
         void sendEchoFrame_ ();
         void sendAliveFrame_();
-
         void checkHeartbeat_();
-
         void dataRecvCallback_ (const unsigned char * addr, const unsigned char * data, int size);
         bool isMasterRegistered_();
-        
-        
         
         std::shared_ptr<Transmission> com_ {};
         std::unique_ptr<Request> req_ {};
@@ -68,9 +58,5 @@ class Legend {
 
         bool isSubprocessLaunched {false};
     
-       
-
-
-
 };
 #endif

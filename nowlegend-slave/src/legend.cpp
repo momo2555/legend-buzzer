@@ -32,14 +32,6 @@ Legend::Legend()
     handlerManager_->addHandler(identificationResponseHandler);
 }
 
-void Legend::enableConfiguration()
-{
-}
-
-void Legend::disableConfiguration()
-{
-}
-
 void Legend::run()
 {
     com_->initTransmission();
@@ -51,6 +43,11 @@ void Legend::run()
     });
     
     createSubProcess_();
+}
+
+bool Legend::isReady()
+{
+    return stateMachine_->transmissionState == TransmissionState::READY_STATE;
 }
 
 void Legend::createSubProcess_()
@@ -117,13 +114,24 @@ void Legend::subProcess()
     default:
         break;
     }
-    //Serial.println("coucou");
     delay(20);
 }
+void Legend::sendRequest(Request request, Entity receiver)
+{
+    if(isReady()) {
+        MacAddress myAddress {Transmission::getMyAddress()};
+        MacAddress masterAddr {deviceManager_->getMaster().address};
+        request.setReceiver(receiver, masterAddr);
+        request.setSender(Entity::DEVICE, myAddress);
+        com_->sendOnce(masterAddr, &request, true);
+    }
+}
+
 bool Legend::isMasterRegistered_()
 {
     return stateMachine_->masterRegistered;
 }
+
 void Legend::sendIdentificationFrame_()
 {
     Serial.println("send identification frame");
