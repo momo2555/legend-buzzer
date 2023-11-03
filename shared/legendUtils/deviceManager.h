@@ -23,6 +23,7 @@ struct Device {
     Timer aliveTimer {};
     
 };
+using DeviceList = std::vector<Device>;
 
 class DeviceManager {
 public:    
@@ -31,12 +32,15 @@ public:
     AddDeviceError addMaster(MacAddress address);
     Device getMaster();
     Device getDevice(MacAddress address);
+    DeviceList getAll();
     void updateDevice(MacAddress address, Device newDeviceValue);
     bool isDeviceExist(MacAddress address);
     bool containMaster();
+    void disconnectDevice(MacAddress address);
+    void reset();
 private:
     void addDevice_(Device device);
-    std::vector<Device> devices_ {};
+    DeviceList devices_ {};
 };
 
 

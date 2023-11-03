@@ -24,9 +24,23 @@ void LegendMaster::run() {
     com_->OnDataRecv<LegendMaster>(this, &LegendMaster::dataRecvCallback_);
 }
 
+void LegendMaster::setup()
+{
+    // check heartbeat of all connected devices
+    for(Device device : this->deviceManager_->getAll()) {
+        if(device.aliveTimer.isElapsed(3000) && device.state == ConnectionState::CONNECTED) {
+            this->deviceManager_->disconnectDevice(device.address);
+            Serial.println("Device disconnected mac = " + 
+                            String(IntArrayToMacAddress(device.address.data()).c_str()));
+        }
+    }
+
+}
+
 void LegendMaster::dataRecvCallback_(const unsigned char *addr, const unsigned char *data, int size)
 {
     Serial.println("receive data");
     auto receivedRequest = std::make_unique<Request>(Request(data, size));
     this->handlerManager_->handleRequest(receivedRequest.get());
+    
 }

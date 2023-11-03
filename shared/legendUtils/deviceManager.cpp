@@ -60,6 +60,11 @@ Device DeviceManager::getDevice(MacAddress address)
     return returnDevice;
 }
 
+DeviceList DeviceManager::getAll()
+{
+    return this->devices_;
+}
+
 void DeviceManager::updateDevice(MacAddress address, Device newDeviceValue)
 {
     auto iter = this->devices_.begin();
@@ -90,6 +95,19 @@ bool DeviceManager::containMaster()
         }
     }
     return containMaster;
+}
+
+void DeviceManager::disconnectDevice(MacAddress address)
+{
+    Device device = getDevice(address);
+    device.state = ConnectionState::PEERED;
+    updateDevice(address, device);
+}
+
+void DeviceManager::reset()
+{
+    // remove all devices
+    this->devices_.clear();
 }
 
 void DeviceManager::addDevice_(Device device)

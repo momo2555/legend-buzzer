@@ -43,6 +43,8 @@ class Legend {
         void sendEchoFrame_ ();
         void sendAliveFrame_();
 
+        void checkHeartbeat_();
+
         void dataRecvCallback_ (const unsigned char * addr, const unsigned char * data, int size);
         bool isMasterRegistered_();
         

@@ -111,13 +111,14 @@ void Legend::subProcess()
             aliveTimer_->timer();
             sendAliveFrame_();
         }
+        checkHeartbeat_();
         break;
 
     default:
         break;
     }
     //Serial.println("coucou");
-    delay(8);
+    delay(20);
 }
 bool Legend::isMasterRegistered_()
 {
@@ -169,6 +170,24 @@ void Legend::sendAliveFrame_() {
         Serial.println("before sending hertbeat");
         //com_->registerPeer(masterAddr.data());
         com_->send(masterAddr, heartbeatReq.get());
+    }
+}
+
+void Legend::checkHeartbeat_()
+{
+    if (isMasterRegistered_() && stateMachine_->transmissionState == TransmissionState::READY_STATE){
+        if(deviceManager_->containMaster()) {
+            Device master = deviceManager_->getMaster();
+            if (master.aliveTimer.isElapsed(3000)) {
+                Serial.println("Master watchdog triggered");
+                stateMachine_->transmissionState = TransmissionState::ECHO_STANDBY;
+                stateMachine_->masterRegistered = false;
+                deviceManager_.reset();
+                
+            }
+        }
+        
+
     }
 }
 

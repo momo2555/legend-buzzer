@@ -14,7 +14,7 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  Serial.println("LOOP");
-  delay(2500);
+  legendMaster->setup();
+  delay(20);
 }
 

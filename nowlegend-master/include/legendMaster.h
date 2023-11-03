@@ -19,6 +19,7 @@ public:
     LegendMaster();
     //~LegendMaster(){};
     void run();
+    void setup();
 
 private:
     void dataRecvCallback_(const unsigned char *addr, const unsigned char *data, int size);
