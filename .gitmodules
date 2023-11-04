@@ -1,0 +1,9 @@
+[submodule "nowlegend-bridge/lib/serialib"]
+	path = nowlegend-bridge/lib/serialib
+	url = https://github.com/imabot2/serialib.git
+[submodule "nowlegend-bridge/lib/socket.io-client-cpp"]
+	path = nowlegend-bridge/lib/socket.io-client-cpp
+	url = git@github.com:socketio/socket.io-client-cpp.git
+[submodule "nowlegend-bridge/lib/websocketpp"]
+	path = nowlegend-bridge/lib/websocketpp
+	url = git@github.com:zaphoyd/websocketpp.git
