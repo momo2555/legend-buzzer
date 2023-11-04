@@ -11,6 +11,7 @@ set(SRC src/main.cpp)
 add_executable(bridge ${SRC})
 
 target_include_directories(bridge PRIVATE ${CMAKE_CURRENT_LIST_DIR}/lib/websocketpp)
+target_include_directories(bridge PRIVATE ${CMAKE_CURRENT_LIST_DIR}/lib/serialib/lib)
 
 target_link_libraries(bridge INTERFACE Boost::system Boost::thread Boost::regex)
 
