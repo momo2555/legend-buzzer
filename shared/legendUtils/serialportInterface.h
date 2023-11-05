@@ -14,6 +14,8 @@ class SerialportInterface {
         void writeRequest(Request *request);
     private:
         char buffer_[MAX_READ_BYTES] {};
+        
+
 
 };
 

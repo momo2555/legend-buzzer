@@ -7,7 +7,9 @@
 #include <variant>
 #include <array>
 #include <memory>
+#include <iostream>
 #include <ArduinoJson.hpp>
+#include "fct_utils.h"
 
 #define STR_MAC_LEN 6
 #define STR_DEVICE_LEN 13
@@ -15,9 +17,9 @@
 #define STR_REQ_DATA_NAME_LEN 7
 #define MAX_DATA_REQUEST_LENGTH 12
 
-typedef std::array<uint8_t, STR_MAC_LEN> MacAddress;
+using MacAddress = std::array<uint8_t, STR_MAC_LEN>;
 
-enum Entity : std::uint8_t
+enum class Entity : std::uint8_t
 {
     MONITOR = 0,
     CONTROLLER,
@@ -26,13 +28,13 @@ enum Entity : std::uint8_t
     NONE
 
 };
-enum IdentificationResult : int
+enum class IdentificationResult : int
 {
     ACCEPTED = 0,
     REFUSED,
     ERROR
 };
-enum RequestType : std::uint8_t
+enum class RequestType : std::uint8_t
 {
     DEVICE_EVENT = 0, // send an event
     DEVICE_DATA,      // Send data
@@ -43,7 +45,7 @@ enum RequestType : std::uint8_t
     HEARTBEAT,        // Say to master that the device is alive to not trigger the watchdog
     HEARTBEAT_RESPONSE, // the server repond back to confirm that he is alived to
 };
-enum RequestDataType : std::uint8_t
+enum class RequestDataType : std::uint8_t
 {
     INT = 0,
     FLOAT,
@@ -68,7 +70,7 @@ struct RequestData
     std::variant<int, float, bool> value;
 };
 
-typedef std::map<std::string, RequestData> DataList;
+//using DataList = std::map<std::string, RequestData>;
 
 template <std::size_t t>
 struct RequestBody
@@ -147,6 +149,7 @@ public:
     void asHeartbeatResponse();
 
     std::string toString();
+    void fromString(std::string jsonData);
 
     RequestBody<MAX_DATA_REQUEST_LENGTH> getRequestBody();
 
@@ -166,6 +169,9 @@ public:
 private:
     std::string entityToString_(Entity entity);
     std::string typeToString_(RequestType type);
+    Entity toEntity_(std::string data);
+    RequestType toType_(std::string data);
+
 
     uint8_t globalIndex_{};
     RequestBody<MAX_DATA_REQUEST_LENGTH> requestBody_{};

@@ -17,6 +17,7 @@ void Router::route(Request *request, MacAddress address)
                request->getReceiverType() == Entity::MONITOR ||
                request->getReceiverType() == Entity::MASTER) {
         //talk on the serial port interface
+        Serial.println("Router : SEND TO MASTER");
         serial_->writeRequest(request);
         
     }else {

@@ -8,6 +8,9 @@ IdentificationHandler::IdentificationHandler(std::shared_ptr<Router> router, std
 
 void IdentificationHandler::handle(Request *request)
 {
+    // forward the request to master server
+    router_->route(request, {});
+    
     Serial.println("Receive identification request");
     auto IdentifyResponseReq = std::make_unique<Request>(Request());
     IdentifyResponseReq->asIdentificationResponse(IdentificationResult::ACCEPTED);
