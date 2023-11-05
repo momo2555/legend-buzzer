@@ -26,30 +26,29 @@ int WebsocketInterface::connect()
 {
     //connect to the server
     websocketpp::lib::error_code ec;
-    this->con = m_endpoint.get_connection(SERVER_URI, ec);
+    this->con = client.get_connection(SERVER_URI, ec);
     if (ec) {
         std::cout << "> Connect initialization error: " << ec.message() << std::endl;
         return -1;
     }
-    con->set_open_handler(WsLib::bind(
+    con->set_open_handler(websocketpp::lib::bind(
         &WebsocketInterface::onOpen,
-        this, &client, WsLib::placeholders::_1
+        this, &client, websocketpp::lib::placeholders::_1
     ));
-    con->set_fail_handler(WsLib::bind(
+    con->set_fail_handler(websocketpp::lib::bind(
         &WebsocketInterface::onFail,
-        this, &client, WsLib::placeholders::_1
+        this, &client, websocketpp::lib::placeholders::_1
     ));
-    con->set_close_handler(WsLib::bind(
+    con->set_close_handler(websocketpp::lib::bind(
         &WebsocketInterface::onClose,
-        this, &client, WsLib::placeholders::_1
+        this, &client, websocketpp::lib::placeholders::_1
     ));
-    con->set_message_handler(WsLib::bind(
+    con->set_message_handler(websocketpp::lib::bind(
         &WebsocketInterface::onMessage,
-        this, &client, WsLib::placeholders::_1
+        this, &client, websocketpp::lib::placeholders::_1
     ));
 
     client.connect(con);
-    status = ConnectionStatus::OPEN;
     return 0;
 }
 
@@ -65,16 +64,31 @@ void WebsocketInterface::disconnect(CloseCode code, std::string reason)
 
 void WebsocketInterface::onOpen(Client *c, ConnectionHandle hdl)
 {
+    status = ConnectionStatus::OPEN;
+    ConnectionPtr con = c->get_con_from_hdl(hdl);
+    server = con->get_response_header("Server");
 }
 
 void WebsocketInterface::onFail(Client *c, ConnectionHandle hdl)
 {
+    status = ConnectionStatus::FAIL;
+    ConnectionPtr con = c->get_con_from_hdl(hdl);
+    server = con->get_response_header("Server");
+    error = con->get_ec().message();
 }
 
 void WebsocketInterface::onClose(Client *c, ConnectionHandle hdl)
 {
+    status = ConnectionStatus::CLOSE;
+    ConnectionPtr con = c->get_con_from_hdl(hdl);
+    std::stringstream s;
+    s << "close code: " << con->get_remote_close_code() << " (" 
+        << websocketpp::close::status::get_string(con->get_remote_close_code()) 
+        << "), close reason: " << con->get_remote_close_reason();
+    error = s.str();
 }
 
 void WebsocketInterface::onMessage(Client *c, ConnectionHandle hdl)
 {
+
 }

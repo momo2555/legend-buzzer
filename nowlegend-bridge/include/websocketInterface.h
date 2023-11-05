@@ -12,13 +12,13 @@ using Client = websocketpp::client<websocketpp::config::asio_client>;
 using ThreadPtr = std::shared_ptr<websocketpp::lib::thread>;
 using ConnectionPtr = Client::connection_ptr;
 using ConnectionHandle = websocketpp::connection_hdl;
-using WsLib = websocketpp::lib;
 using CloseCode =  websocketpp::close::status::value;
 
-enum ConnectionStatus {
+enum class ConnectionStatus {
     OPEN,
-    CLOSE
-}
+    CLOSE,
+    FAIL,
+};
 
 class WebsocketInterface {
 public:
@@ -38,6 +38,8 @@ private:
     ThreadPtr thread {};
     ConnectionPtr con {};
     ConnectionStatus status {ConnectionStatus::CLOSE};
+    std::string server {"N/A"};
+    std::string error {""};
 
 };
 

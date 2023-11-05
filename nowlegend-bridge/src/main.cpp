@@ -1,9 +1,6 @@
-#include <websocketpp/config/asio_no_tls_client.hpp>
-#include <websocketpp/client.hpp>
-#include <websocketpp/common/thread.hpp>
-#include <websocketpp/common/memory.hpp>
+#include <websocketInterface.h>
+#include <serialportInterface.h>
 
-#include <serialib.h>
 
 #include <cstdlib>
 
@@ -13,7 +10,7 @@
 #include <sstream>
 
 
-#define SERIAL_PORT "/dev/ttyUSB0"
+
 using Client = websocketpp::client<websocketpp::config::asio_client>;
 using ThreadPtr = std::shared_ptr<websocketpp::lib::thread>;
 
