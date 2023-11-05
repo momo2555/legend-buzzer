@@ -15,11 +15,16 @@ void SerialportInterface::connect()
     }
 }
 
+void SerialportInterface::write(std::string msg)
+{
+    serial.writeString(msg.c_str());
+}
+
 std::string SerialportInterface::read()
 {
     std::string content {""};
     if(isReady()) {
-        int readError = serial.readString(buffer, '\n', MAX_READ_BYTES, 100);
+        int readError = serial.readString(buffer, '\n', MAX_READ_BYTES, 1000);
         content = std::string(buffer);
     }
     return content;

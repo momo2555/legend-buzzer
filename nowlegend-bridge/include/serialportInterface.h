@@ -17,7 +17,7 @@ public:
     using ptr = std::unique_ptr<SerialportInterface>;
     SerialportInterface();
     void connect();
-    void write();
+    void write(std::string msg);
     std::string read();
 
     bool isReady();
