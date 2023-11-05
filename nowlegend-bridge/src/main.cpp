@@ -30,7 +30,9 @@ int main()
             std::string content = serial->read();
             if(content != "") {
                 std::cout << content << std::endl;
-                websocket.send(content);
+
+                if(content.substr(0,1) == "R") //send only if the first char is an R
+                    websocket.send(content.substr(1)); // do not send the first letter, only the JSON
             }
             
         }
