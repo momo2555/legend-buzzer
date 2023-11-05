@@ -14,6 +14,7 @@
 #include "handlerManager.h"
 #include "router.h"
 #include "stateMachine.h"
+#include "serialportInterface.h"
 #include "handlers/echoResponseHandler.h"
 #include "handlers/heartbeatResponseHandler.h"
 #include "handlers/identificationResponseHandler.h"
@@ -40,7 +41,10 @@ class Legend {
         void dataRecvCallback_ (const unsigned char * addr, const unsigned char * data, int size);
         bool isMasterRegistered_();
         
-        std::shared_ptr<Transmission> com_ {};
+        // interfaces
+        Transmission::ptr com_ {};
+        SerialportInterface::ptr serial_ {};
+
         std::unique_ptr<Request> req_ {};
         std::shared_ptr<Router> router_ {};
         std::shared_ptr<DeviceManager> deviceManager_ {};

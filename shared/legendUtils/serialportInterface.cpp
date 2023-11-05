@@ -7,9 +7,10 @@ void SerialportInterface::init() {
     Serial.begin(115200);
 }  
 Request SerialportInterface::readRequest() {
-    int size = Serial.readBytesUntil("\n", buffer, MAX_READ_BYTES);
-    Request request(buffer, size);
+    int size = Serial.readBytesUntil('\n', buffer_, MAX_READ_BYTES);
+    Request request((const unsigned char *)buffer_, size);
+    return request;
 }
-void SerialportInterface::writeRequest(Request request) {
-    Serial.prinln("R" + request.toString().c_str());
+void SerialportInterface::writeRequest(Request *request) {
+    Serial.println(String("R") + String(request->toString().c_str()));
 }

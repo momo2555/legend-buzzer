@@ -27,6 +27,7 @@
 
   class Transmission {
       public:
+        using ptr = std::shared_ptr<Transmission>;
           Transmission();
           void initTransmission();
           void registerPeer(uint8_t address[]);

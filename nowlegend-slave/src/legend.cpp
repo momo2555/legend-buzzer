@@ -5,6 +5,10 @@ TaskHandle_t subProc;
 Legend::Legend()
 {
     com_ = std::make_shared<Transmission>(Transmission());
+    com_->initTransmission();
+    serial_ = std::make_shared<SerialportInterface>(SerialportInterface());
+    serial_->init();
+
     macAddressToIntArray(WiFi.macAddress().c_str(), myAddr_.data());
 
     //init the state machine
@@ -16,7 +20,7 @@ Legend::Legend()
     identificationTimer_ =  new Timer();
     aliveTimer_ =  new Timer();
 
-    router_ = std::make_shared<Router>(Router(com_));
+    router_ = std::make_shared<Router>(Router(com_, serial_));
     deviceManager_ = std::make_shared<DeviceManager>(DeviceManager());
     handlerManager_ = std::make_unique<HandlerManager>(HandlerManager(router_));
     
@@ -34,7 +38,7 @@ Legend::Legend()
 
 void Legend::run()
 {
-    com_->initTransmission();
+    
     com_->registerEchoPeer();
     com_->OnDataRecv<Legend>(this, &Legend::dataRecvCallback_);
     com_->OnDataSent([](const unsigned char * addr, esp_now_send_status_t status){

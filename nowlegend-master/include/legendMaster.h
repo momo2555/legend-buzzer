@@ -24,7 +24,8 @@ public:
 private:
     void dataRecvCallback_(const unsigned char *addr, const unsigned char *data, int size);
     
-    std::shared_ptr<Transmission> com_ {};
+    Transmission::ptr com_ {};
+    SerialportInterface::ptr serial_ {};
     std::shared_ptr<Router> router_ {};
     std::shared_ptr<DeviceManager> deviceManager_ {};
     std::unique_ptr<HandlerManager> handlerManager_ {};

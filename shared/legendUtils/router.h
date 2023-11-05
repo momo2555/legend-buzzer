@@ -2,15 +2,17 @@
 #define ROUTER_INTERFACE_H
 
 #include "transmission.h"
+#include "serialportInterface.h"
 #include "request.h"
 
 class Router 
 {
 public:
-    Router(std::shared_ptr<Transmission> com);
+    Router(Transmission::ptr com, SerialportInterface::ptr serial);
     void route(Request *request, MacAddress address);
 private:
-    std::shared_ptr<Transmission> com_ {};
+    Transmission::ptr com_ {};
+    SerialportInterface::ptr serial_ {};
 
 
 };

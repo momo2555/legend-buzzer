@@ -8,7 +8,7 @@ std::unique_ptr<Legend> legend {};
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(115200);
+  // Serial.begin(115200);
   // const char* ssid {"gogo power ranger"};
   // const char* mdp {"momomomo"};
   

@@ -7,13 +7,14 @@
 #define MAX_READ_BYTES 2000
 class SerialportInterface {
     public:
+    using ptr = std::shared_ptr<SerialportInterface>;
         SerialportInterface();
         void init();
         Request readRequest();
-        void writeRequest(Request request);
+        void writeRequest(Request *request);
     private:
-        char buffer[2000] {};
+        char buffer_[MAX_READ_BYTES] {};
 
-}
+};
 
 #endif
