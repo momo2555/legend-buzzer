@@ -7,6 +7,7 @@
 #include <websocketpp/common/memory.hpp>
 
 #include <memory>
+#include <functional>
 
 #define SERVER_URI "ws://localhost:2225"
 
@@ -15,7 +16,7 @@ using ThreadPtr = std::shared_ptr<websocketpp::lib::thread>;
 using ConnectionPtr = Client::connection_ptr;
 using ConnectionHandle = websocketpp::connection_hdl;
 using CloseCode =  websocketpp::close::status::value;
-
+using HookFunction = std::function<void(std::string)>;
 enum class ConnectionStatus {
     OPEN,
     CLOSE,
@@ -35,9 +36,9 @@ public:
     void onOpen(Client* c, ConnectionHandle hdl);
     void onFail(Client* c, ConnectionHandle hdl);
     void onClose(Client* c, ConnectionHandle hdl);
-    void onMessage(Client* c, ConnectionHandle hdl);
+    void onMessage(ConnectionHandle, Client::message_ptr msg);
 
-    //void addHook(std::function newHook);
+    void addHook(HookFunction newHook);
     bool isReady();
 
 private:
@@ -47,7 +48,7 @@ private:
     ConnectionStatus status {ConnectionStatus::CLOSE};
     std::string server {"N/A"};
     std::string error {""};
-    //std::vector<std::function> hooks {};
+    std::vector<HookFunction> hooks {};
 
 };
 

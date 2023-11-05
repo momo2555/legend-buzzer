@@ -10,14 +10,18 @@
 #include <sstream>
 
 
-
-int main() {
+int main() 
+{
     bool exec = true;
     SerialportInterface::ptr serial = std::make_unique<SerialportInterface>(SerialportInterface());
     WebsocketInterface websocket;
 
     serial->connect();
     websocket.connect();
+
+    websocket.addHook([&] (std::string msg) {
+        serial->write(msg + "\n");
+    });
 
     if (!serial->isReady()) return 1;
     

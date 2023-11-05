@@ -44,8 +44,9 @@ int WebsocketInterface::connect()
         this, &client, websocketpp::lib::placeholders::_1
     ));
     con->set_message_handler(websocketpp::lib::bind(
-        &WebsocketInterface::onMessage,
-        this, &client, websocketpp::lib::placeholders::_1
+        &WebsocketInterface::onMessage, this, 
+        websocketpp::lib::placeholders::_1, 
+        websocketpp::lib::placeholders::_2
     ));
 
     client.connect(con);
@@ -100,9 +101,18 @@ void WebsocketInterface::onClose(Client *c, ConnectionHandle hdl)
     error = s.str();
 }
 
-void WebsocketInterface::onMessage(Client *c, ConnectionHandle hdl)
+void WebsocketInterface::onMessage(ConnectionHandle, Client::message_ptr msg)
 {
+    if (msg->get_opcode() == websocketpp::frame::opcode::text) {
+        for(HookFunction hook : hooks) {
+            hook(msg->get_payload());
+        }
+    }
+}
 
+void WebsocketInterface::addHook(HookFunction newHook)
+{
+    this->hooks.push_back(newHook);
 }
 
 bool WebsocketInterface::isReady()
