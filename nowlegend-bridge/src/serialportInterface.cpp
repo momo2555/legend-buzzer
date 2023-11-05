@@ -14,3 +14,18 @@ void SerialportInterface::connect()
         status = SerialStatus::FAIL;
     }
 }
+
+std::string SerialportInterface::read()
+{
+    std::string content {""};
+    if(isReady()) {
+        int readError = serial.readString(buffer, '\n', MAX_READ_BYTES, 100);
+        content = std::string(buffer);
+    }
+    return content;
+}
+
+bool SerialportInterface::isReady()
+{
+    return status == SerialStatus::OPEN;
+}

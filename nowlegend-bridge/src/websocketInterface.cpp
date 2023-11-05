@@ -62,6 +62,18 @@ void WebsocketInterface::disconnect(CloseCode code, std::string reason)
     status = ConnectionStatus::CLOSE;
 }
 
+void WebsocketInterface::send(std::string message)
+{
+    websocketpp::lib::error_code ec;
+    if(isReady()) {
+        client.send(con->get_handle(), message, websocketpp::frame::opcode::text, ec);
+        if (ec) {
+            std::cout << "> Error sending message: " << ec.message() << std::endl;
+            return;
+        }
+    } 
+}
+
 void WebsocketInterface::onOpen(Client *c, ConnectionHandle hdl)
 {
     status = ConnectionStatus::OPEN;
@@ -91,4 +103,9 @@ void WebsocketInterface::onClose(Client *c, ConnectionHandle hdl)
 void WebsocketInterface::onMessage(Client *c, ConnectionHandle hdl)
 {
 
+}
+
+bool WebsocketInterface::isReady()
+{
+    return status == ConnectionStatus::OPEN;
 }

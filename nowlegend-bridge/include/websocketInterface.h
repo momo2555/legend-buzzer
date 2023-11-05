@@ -6,6 +6,8 @@
 #include <websocketpp/common/thread.hpp>
 #include <websocketpp/common/memory.hpp>
 
+#include <memory>
+
 #define SERVER_URI "ws://localhost:2225"
 
 using Client = websocketpp::client<websocketpp::config::asio_client>;
@@ -22,16 +24,21 @@ enum class ConnectionStatus {
 
 class WebsocketInterface {
 public:
+    
     WebsocketInterface();
     ~WebsocketInterface();
 
     int connect ();
     void disconnect(CloseCode code, std::string reason);
+    void send(std::string message);
 
     void onOpen(Client* c, ConnectionHandle hdl);
     void onFail(Client* c, ConnectionHandle hdl);
     void onClose(Client* c, ConnectionHandle hdl);
     void onMessage(Client* c, ConnectionHandle hdl);
+
+    //void addHook(std::function newHook);
+    bool isReady();
 
 private:
     Client client {};
@@ -40,6 +47,7 @@ private:
     ConnectionStatus status {ConnectionStatus::CLOSE};
     std::string server {"N/A"};
     std::string error {""};
+    //std::vector<std::function> hooks {};
 
 };
 
