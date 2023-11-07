@@ -1,7 +1,7 @@
 #ifndef TYPE_H
 #define TYPE_H
 
-
+#include <Arduino.h>
 #include <iostream>
 #include <array>
 #include <vector>
@@ -75,12 +75,14 @@ private:
         
         return s;
     }
-    std::string intToHexStr(uint8_t value) {
-        std::stringstream stream;
+    std::string intToHexStr(std::uint8_t value) {
+        std::uint8_t dig1 = value / 16;
+        std::uint8_t dig2 = value % 16;
+
+        char tab[17] = "0123456789ABCDEF";
+        char res[3] {tab[dig1], tab[dig2], '\0'};
         
-        stream << std::hex << value;
-        //std::cout << "debug value = " << (int)value << "; hex = " << stream.str() << std::endl;
-        return str_toupper(stream.str());
+        return std::string(res);
     }
     BasicMacAddress mac_ {};
 };
