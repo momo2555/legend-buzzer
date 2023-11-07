@@ -8,6 +8,7 @@
 #include <iomanip>
 #include <cctype>
 #include <algorithm>
+#include "type.h"
 
 
 std::string str_toupper(std::string s);
@@ -24,5 +25,8 @@ void macAddressToIntArray(std::string addr, uint8_t output[]);
 std::string IntArrayToMacAddress(uint8_t input[]);
 bool compareAddresses(uint8_t addr1[], uint8_t addr2[]);
 
-
+class MacAddressConverter {
+    static MacAddress toMacAddress(std::string mac);
+    static std::string toString(MacAddress mac);
+}
 #endif

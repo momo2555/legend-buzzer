@@ -9,15 +9,15 @@
 #include <memory>
 #include <iostream>
 #include <ArduinoJson.hpp>
+#include "type.h"
 #include "fct_utils.h"
 
-#define STR_MAC_LEN 6
 #define STR_DEVICE_LEN 13
 #define STR_EVENT_LEN 20
 #define STR_REQ_DATA_NAME_LEN 7
 #define MAX_DATA_REQUEST_LENGTH 12
 
-using MacAddress = std::array<uint8_t, STR_MAC_LEN>;
+
 
 enum class Entity : std::uint8_t
 {
