@@ -146,13 +146,8 @@ void Request::fromString(std::string jsonData)
     requestBody_.header.to = toEntity_(doc["header"]["to"]);
     requestBody_.header.type = toType_(doc["header"]["type"]);
     
-    std::uint8_t from_addr[STR_MAC_LEN] {};
-    macAddressToIntArray(doc["header"]["from_addr"].as<std::string>(), from_addr);
-    std::copy(std::begin(from_addr), std::end(from_addr), requestBody_.header.senderAddress.begin());
-
-    std::uint8_t to_addr[STR_MAC_LEN] {};
-    macAddressToIntArray(doc["header"]["to_addr"].as<std::string>(), to_addr);
-    std::copy(std::begin(to_addr), std::end(to_addr), requestBody_.header.receiverAddress.begin());
+    requestBody_.header.senderAddress = doc["header"]["from_addr"].as<std::string>();
+    requestBody_.header.receiverAddress = doc["header"]["to_addr"].as<std::string>();
     
     if (requestBody_.header.type == RequestType::DEVICE_EVENT)
     {
