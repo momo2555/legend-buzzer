@@ -66,15 +66,6 @@ public:
         return mac_.data();
     }
 private:
-    std::string str_toupper(std::string s)
-    {
-        
-        std::transform(s.begin(), s.end(), s.begin(), 
-            [](unsigned char c){ return std::toupper(c); } // correct
-        );
-        
-        return s;
-    }
     std::string intToHexStr(std::uint8_t value) {
         std::uint8_t dig1 = value / 16;
         std::uint8_t dig2 = value % 16;
