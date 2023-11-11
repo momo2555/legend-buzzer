@@ -4,6 +4,7 @@ TaskHandle_t subProc;
 
 Legend::Legend()
 {
+    xSemaphore = xSemaphoreCreateMutex();
     com_ = std::make_shared<Transmission>(Transmission());
     com_->initTransmission();
     serial_ = std::make_shared<SerialportInterface>(SerialportInterface());
@@ -76,8 +77,10 @@ void Legend::dataRecvCallback_(const unsigned char *addr, const unsigned char *d
 {
 
     Serial.println("receive data");
+    xSemaphoreTake( xSemaphore, portMAX_DELAY );
     auto receivedRequest = std::make_unique<Request>(Request(data, size));
     this->handlerManager_->handleRequest(receivedRequest.get());
+    xSemaphoreGive(xSemaphore);
 }
 
 void Legend::subProcess()
@@ -123,11 +126,13 @@ void Legend::subProcess()
 void Legend::sendRequest(Request request, Entity receiver)
 {
     if(isReady()) {
+        xSemaphoreTake( xSemaphore, portMAX_DELAY );
         MacAddress myAddress {Transmission::getMyAddress()};
         MacAddress masterAddr {deviceManager_->getMaster().address};
         request.setReceiver(receiver, masterAddr);
         request.setSender(Entity::DEVICE, myAddress);
         com_->sendOnce(masterAddr, &request, true);
+        xSemaphoreGive(xSemaphore);
     }
 }
 
@@ -141,6 +146,7 @@ void Legend::sendIdentificationFrame_()
     Serial.println("send identification frame");
     if (isMasterRegistered_() && stateMachine_->transmissionState == TransmissionState::IDENTIFICATION_STATE)
     {
+        xSemaphoreTake( xSemaphore, portMAX_DELAY );
         auto identifyReq = std::make_unique<Request>(Request());
         identifyReq->asIdentification();
         MacAddress myAddress {Transmission::getMyAddress()};
@@ -149,6 +155,7 @@ void Legend::sendIdentificationFrame_()
         identifyReq->setReceiver(Entity::MASTER, masterAddr);
         com_->registerPeer(masterAddr.data());
         com_->send(masterAddr, identifyReq.get());
+        xSemaphoreGive(xSemaphore);
     }
 }
 void Legend::sendEchoFrame_()
@@ -156,6 +163,7 @@ void Legend::sendEchoFrame_()
     Serial.println("send echo frame");
     if (!isMasterRegistered_() && stateMachine_->transmissionState == TransmissionState::ECHO_STANDBY)
     {   
+        xSemaphoreTake( xSemaphore, portMAX_DELAY );
         Serial.println("send echo");
         auto echoReq = std::make_unique<Request>(Request());
         echoReq->asEcho();
@@ -166,13 +174,14 @@ void Legend::sendEchoFrame_()
         MacAddress emptyAddr {};
         com_->send(emptyAddr, echoReq.get(), SendMethod::BROADCAST);
         //com_->sendOnce(emptyAddr, echoReq.get(), true);
+        xSemaphoreGive(xSemaphore);
     }
 }
 void Legend::sendAliveFrame_() {
     Serial.println("send heartbeat frame");
     if (isMasterRegistered_() && stateMachine_->transmissionState == TransmissionState::READY_STATE)
     {
-        
+        xSemaphoreTake( xSemaphore, portMAX_DELAY );
         auto heartbeatReq = std::make_unique<Request>(Request());
         heartbeatReq->asHeartbeat();
         MacAddress myAddress {Transmission::getMyAddress()};
@@ -182,6 +191,7 @@ void Legend::sendAliveFrame_() {
         Serial.println("before sending hertbeat");
         //com_->registerPeer(masterAddr.data());
         com_->send(masterAddr, heartbeatReq.get());
+        xSemaphoreGive(xSemaphore);
     }
 }
 

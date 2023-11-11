@@ -19,6 +19,7 @@
 #include "handlers/heartbeatResponseHandler.h"
 #include "handlers/identificationResponseHandler.h"
 #include "handlers/messageHandler.h"
+#include "freertos/semphr.h"
 
 typedef Timer* TimerPtr;
 
@@ -59,6 +60,9 @@ class Legend {
         TimerPtr identificationTimer_ {};
         TimerPtr aliveTimer_ {};
         void initAllTimers_();
+
+        // mutex
+        SemaphoreHandle_t xSemaphore = NULL;
 
         bool isSubprocessLaunched {false};
     
