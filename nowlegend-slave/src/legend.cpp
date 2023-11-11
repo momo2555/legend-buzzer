@@ -9,7 +9,7 @@ Legend::Legend()
     serial_ = std::make_shared<SerialportInterface>(SerialportInterface());
     serial_->init();
 
-    macAddressToIntArray(WiFi.macAddress().c_str(), myAddr_.data());
+    myAddr_ = std::string(WiFi.macAddress().c_str());
 
     //init the state machine
     stateMachine_ = new LegendStateMachine();

@@ -14,8 +14,7 @@ void IdentificationHandler::handle(Request *request)
     Serial.println("Receive identification request");
     auto IdentifyResponseReq = std::make_unique<Request>(Request());
     IdentifyResponseReq->asIdentificationResponse(IdentificationResult::ACCEPTED);
-    MacAddress myAddress{};
-    macAddressToIntArray(WiFi.macAddress().c_str(), myAddress.data());
+    MacAddress myAddress{std::string(WiFi.macAddress().c_str())};
     MacAddress deviceAddr = request->getSenderAddress();
     //com_->sendOnce(sender, echoResponseReq.get(), true);
     IdentifyResponseReq->setSender(Entity::MASTER, myAddress);

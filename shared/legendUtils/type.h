@@ -14,6 +14,7 @@
 using BasicMacAddress = std::array<std::uint8_t, 6>;
 class MacAddress {
 public:
+    MacAddress() : mac_ {0,0,0,0,0,0} {}
     MacAddress(std::string mac) {
         std::uint8_t i = 0, j = 0, value = 0;
         for(char s: mac) {

@@ -13,7 +13,7 @@ void IdentificationResponseHandler::handle(Request *request)
         if (this->deviceManager_->containMaster()) {
             Device master = this->deviceManager_->getMaster();
             IdentificationResult res = request->getIdentifactionResult();
-            Serial.println("Read the identification result = " + String(res));
+            Serial.println("Read the identification result = " + String((int)res));
             if (res == IdentificationResult::ACCEPTED) {
                 Serial.println("Identification accepted");
                 master.state = ConnectionState::CONNECTED;

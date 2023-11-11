@@ -12,11 +12,9 @@ void setReceiveCallback(ReceiveCallback cb)
 Transmission::Transmission()
 {
 }
-void Transmission::registerPeer(std::string address)
+void Transmission::registerPeer(MacAddress address)
 {
-    uint8_t intAddress[6];
-    macAddressToIntArray(address.c_str(), intAddress);
-    registerPeer(intAddress);
+    registerPeer(address.data());
 }
 void Transmission::registerPeer(uint8_t address[])
 {
@@ -71,17 +69,14 @@ void Transmission::deletePeer(uint8_t address[])
     }
     peerIndex = newPeerIndex;
 }
-void Transmission::deletePeer(std::string address)
+void Transmission::deletePeer(MacAddress address)
 {
-    uint8_t intAddress[6];
-    macAddressToIntArray(address, intAddress);
-    deletePeer(intAddress);
+    deletePeer(address.data());
 }
 MacAddress Transmission::getMyAddress()
 {
-    MacAddress myAddress{};
-    macAddressToIntArray(WiFi.macAddress().c_str(), myAddress.data());
-    return myAddress;
+    MacAddress addr {std::string(WiFi.macAddress().c_str())};
+    return addr;
 }
 bool Transmission::isPeerRegistered(uint8_t address[])
 {
@@ -99,9 +94,7 @@ void Transmission::initTransmission()
 {
 
     WiFi.mode(WIFI_STA);
-    myStrAddress = std::string(WiFi.macAddress().c_str());
-    // write the mac address in right format (int tab)
-    macAddressToIntArray(myStrAddress, myAdress);
+    myAddress = std::string(WiFi.macAddress().c_str());
 
     if (esp_now_init() != ESP_OK)
     {

@@ -11,8 +11,7 @@ void EchoHandler::handle(Request *request)
     Serial.println("EchoHandler : receive echo - send it back ");
     auto echoResponseReq = std::make_unique<Request>(Request());
     echoResponseReq->asEchoResponse();
-    MacAddress myAddress{};
-    macAddressToIntArray(WiFi.macAddress().c_str(), myAddress.data());
+    MacAddress myAddress {std::string(WiFi.macAddress().c_str())};
     MacAddress sender = request->getSenderAddress();
     //com_->sendOnce(sender, echoResponseReq.get(), true);
     echoResponseReq->setSender(Entity::MASTER, myAddress);

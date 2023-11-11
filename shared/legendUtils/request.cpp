@@ -106,8 +106,8 @@ std::string Request::toString()
     doc["header"]["to"] = entityToString_(requestBody_.header.to);
     doc["header"]["type"] = typeToString_(requestBody_.header.type);
     // Ne marche pas avec ces deux lignes
-    doc["header"]["from_addr"] = IntArrayToMacAddress(requestBody_.header.senderAddress.data());
-    doc["header"]["to_addr"] = IntArrayToMacAddress(requestBody_.header.receiverAddress.data());
+    doc["header"]["from_addr"] = requestBody_.header.senderAddress.toString();
+    doc["header"]["to_addr"] = requestBody_.header.receiverAddress.toString();
     // doc["header"]["mac"] = requestBody_.header.mac;
     if (requestBody_.header.type == RequestType::DEVICE_EVENT)
     {

@@ -34,8 +34,8 @@
           void registerEchoPeer();
           void deleteEchoPeer();
           void deletePeer(uint8_t address[]);
-          void registerPeer(std::string address);
-          void deletePeer(std::string address);
+          void registerPeer(MacAddress address);
+          void deletePeer(MacAddress address);
           void OnDataSent(void (*callBack)(const unsigned char*, esp_now_send_status_t));
           template<class A>
           void OnDataRecv(A* class_ptr, void (A::* callBack)(const unsigned char*, const unsigned char*, int)) {
@@ -66,7 +66,7 @@
           
           
       private:
-          uint8_t myAdress[6];
+          MacAddress myAddress;
           std::string myStrAddress;
           bool newMessage;
           //you cann add only 4 peers
