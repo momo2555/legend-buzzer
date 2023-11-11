@@ -163,12 +163,13 @@ void Transmission::send(MacAddress address, Request *request, SendMethod method)
 }
 void Transmission::sendOnce(MacAddress address, Request* request, bool strict) {
     auto requestBody = request->getRequestBody();
-    if(!isPeerRegistered(address.data())) {
+    bool registered = isPeerRegistered(address.data());
+    if(!registered) {
         Serial.println("register the new peer");
         registerPeer(address.data());
     }
     send(address, request);
-    if(strict) {
+    if(strict && registered) {
         deletePeer(address.data());
     }
     
