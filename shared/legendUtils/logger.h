@@ -17,7 +17,7 @@ public:
         Serial.print("L ");
         Serial.print(millis());
         Serial.print(" [DEBUG] >> ");
-        Serial.print(log.c_str());
+        Serial.println(log.c_str());
 
     }
 };
