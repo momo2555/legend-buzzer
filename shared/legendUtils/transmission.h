@@ -6,7 +6,7 @@
 #include "WiFi.h"
 #include "fct_utils.h"
 #include "request.h"
-
+#include "logger.h"
 
 #ifndef MAX_CONNECTION
   #define MAX_CONNECTION 10

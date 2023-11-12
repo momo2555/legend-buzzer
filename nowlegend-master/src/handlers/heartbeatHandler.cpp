@@ -8,7 +8,7 @@ HeartbeatHandler::HeartbeatHandler(std::shared_ptr<Router> router, std::shared_p
 
 void HeartbeatHandler::handle(Request *request)
 {
-    Serial.println("Receive heartbeat request");
+    Logger::log("Receive heartbeat request");
     auto heartbeatResponseReq = std::make_unique<Request>(Request());
     heartbeatResponseReq->asHeartbeatResponse();
 

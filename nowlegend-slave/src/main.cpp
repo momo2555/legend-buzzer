@@ -13,9 +13,9 @@ void setup() {
   // const char* mdp {"momomomo"};
   
   
-  // Serial.println("Send message");
+  // Logger::log("Send message");
   // auto request = std::make_unique<Request>();
-  // Serial.println("phase 0");
+  // Logger::log("phase 0");
   // request->asEvent("test");
   // request->setDeviceName("buzzer");
   // request->setSender(Entity::DEVICE);
@@ -27,13 +27,13 @@ void setup() {
   // request->setData<int>("imuac2", 5);
   // request->setData<float>("imuac3", 12.9f);
   // request->setData<float>("imuac4", 12.9f);
-  // Serial.println("phase 1");
-  // Serial.println(request->toString().c_str());
-  // Serial.println("phase 2");
-  // Serial.println(request->toString().length());
+  // Logger::log("phase 1");
+  // Logger::log(request->toString().c_str());
+  // Logger::log("phase 2");
+  // Logger::log(request->toString().length());
   // RequestBody req = request->getRequestBody();
-  // Serial.println(req.data.size());
-  // Serial.println(sizeof(req));
+  // Logger::log(req.data.size());
+  // Logger::log(sizeof(req));
 
   legend =  std::make_unique<Legend>(Legend());
   legend->run();
@@ -50,7 +50,7 @@ void loop() {
     Request request {};
     request.asEvent("coucou");
     legend->sendRequest(request, Entity::MONITOR);
-    Serial.println("I'm ready - send event");
+    Logger::log("I'm ready - send event");
     
   }
   

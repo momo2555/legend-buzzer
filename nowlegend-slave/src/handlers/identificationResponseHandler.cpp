@@ -8,14 +8,14 @@ IdentificationResponseHandler::IdentificationResponseHandler(std::shared_ptr<Rou
 
 void IdentificationResponseHandler::handle(Request *request)
 {
-    Serial.println("Receive identification response");
+    Logger::log("Receive identification response");
     if(request->getSenderType() == Entity::MASTER) {
         if (this->deviceManager_->containMaster()) {
             Device master = this->deviceManager_->getMaster();
             IdentificationResult res = request->getIdentifactionResult();
-            Serial.println("Read the identification result = " + String((int)res));
+            Logger::log("Read the identification result = " + std::string(String((int)res).c_str()));
             if (res == IdentificationResult::ACCEPTED) {
-                Serial.println("Identification accepted");
+                Logger::log("Identification accepted");
                 master.state = ConnectionState::CONNECTED;
                 master.aliveTimer.timer();
                 this->deviceManager_->updateDevice(master.address, master);
@@ -25,7 +25,7 @@ void IdentificationResponseHandler::handle(Request *request)
 
             }
         }else {
-            Serial.println("The master server identy wasn't registered");
+            Logger::log("The master server identy wasn't registered");
         }
         
         

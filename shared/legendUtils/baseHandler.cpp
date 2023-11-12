@@ -13,6 +13,6 @@ BaseHandler::BaseHandler(std::shared_ptr<Router> router, std::shared_ptr<DeviceM
 
 bool BaseHandler::canHandle(Request *request)
 {
-    Serial.println("BaseHandler : canHandle");
+    Logger::log("BaseHandler : canHandle");
     return false;
 }*/

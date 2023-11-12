@@ -11,7 +11,7 @@ void IdentificationHandler::handle(Request *request)
     // forward the request to master server
     router_->route(request, {});
     
-    Serial.println("Receive identification request");
+    Logger::log("Receive identification request");
     auto IdentifyResponseReq = std::make_unique<Request>(Request());
     IdentifyResponseReq->asIdentificationResponse(IdentificationResult::ACCEPTED);
     MacAddress myAddress{std::string(WiFi.macAddress().c_str())};

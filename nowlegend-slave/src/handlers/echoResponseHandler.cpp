@@ -9,9 +9,9 @@ EchoResponseHandler::EchoResponseHandler(std::shared_ptr<Router> router, std::sh
 
 void EchoResponseHandler::handle(Request *request)
 {
-    Serial.println("receive echo response");
+    Logger::log("receive echo response");
     if(request->getSenderType() == Entity::MASTER) {
-        Serial.println("Add Master in devices");
+        Logger::log("Add Master in devices");
         this->deviceManager_->addMaster(request->getSenderAddress());
         this->stateMachine->transmissionState = TransmissionState::IDENTIFICATION_STATE;
         this->stateMachine->masterRegistered = true;

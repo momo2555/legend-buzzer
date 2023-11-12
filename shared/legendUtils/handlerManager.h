@@ -6,6 +6,7 @@
 #include "request.h"
 
 #include "baseHandler.h"
+#include "logger.h"
 
 
 class HandlerManager

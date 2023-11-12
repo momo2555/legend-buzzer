@@ -9,18 +9,18 @@ Router::Router(Transmission::ptr com, SerialportInterface::ptr serial)
 
 void Router::route(Request *request, MacAddress address)
 {
-    Serial.println("Router : Route the request");   
+    Logger::log("Router : Route the request");   
     if(request->getReceiverType() == Entity::DEVICE) {
-        Serial.println("Router : device destinaton");   
+        Logger::log("Router : device destinaton");   
         com_->sendOnce(address, request, true);
     } else if (request->getReceiverType() == Entity::CONTROLLER ||
                request->getReceiverType() == Entity::MONITOR ||
                request->getReceiverType() == Entity::MASTER) {
         //talk on the serial port interface
-        Serial.println("Router : SEND TO MASTER");
+        Logger::log("Router : SEND TO MASTER");
         serial_->writeRequest(request);
         
     }else {
-        Serial.println("Router : Reciver unknown");
+        Logger::log("Router : Reciver unknown");
     }
 }

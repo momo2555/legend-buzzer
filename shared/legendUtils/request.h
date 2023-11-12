@@ -11,6 +11,7 @@
 #include <ArduinoJson.hpp>
 #include "type.h"
 #include "fct_utils.h"
+#include "logger.h"
 
 #define STR_DEVICE_LEN 13
 #define STR_EVENT_LEN 20

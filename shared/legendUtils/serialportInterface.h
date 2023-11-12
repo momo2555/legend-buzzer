@@ -3,6 +3,7 @@
 
 #include "request.h"
 #include <Arduino.h>
+#include "logger.h"
 
 #define MAX_READ_BYTES 2000
 class SerialportInterface {

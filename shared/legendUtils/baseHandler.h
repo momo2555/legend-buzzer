@@ -4,6 +4,7 @@
 #include "request.h"
 #include "router.h"
 #include "deviceManager.h"
+#include "logger.h"
 
 class BaseHandler
 {

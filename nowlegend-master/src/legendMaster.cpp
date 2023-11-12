@@ -33,7 +33,7 @@ void LegendMaster::setup()
     for(Device device : this->deviceManager_->getAll()) {
         if(device.aliveTimer.isElapsed(3000) && device.state == ConnectionState::CONNECTED) {
             this->deviceManager_->disconnectDevice(device.address);
-            Serial.println("Device disconnected mac = " + 
+            Logger::log("Device disconnected mac = " + 
                             String(device.address.toString().c_str()));
         }
     }
@@ -42,7 +42,7 @@ void LegendMaster::setup()
 
 void LegendMaster::dataRecvCallback_(const unsigned char *addr, const unsigned char *data, int size)
 {
-    Serial.println("receive data");
+    Logger::log("receive data");
     auto receivedRequest = std::make_unique<Request>(Request(data, size));
     this->handlerManager_->handleRequest(receivedRequest.get());
     

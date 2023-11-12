@@ -31,7 +31,7 @@ void Transmission::registerPeer(uint8_t address[])
         // Add peer
         if (esp_now_add_peer(&peerInfo) != ESP_OK)
         {
-            Serial.println("Failed to add peer");
+            Logger::log("Failed to add peer");
             return;
         }
         // add peer to the registered tab
@@ -98,7 +98,7 @@ void Transmission::initTransmission()
 
     if (esp_now_init() != ESP_OK)
     {
-        Serial.println("Error initializing ESP-NOW");
+        Logger::log("Error initializing ESP-NOW");
         return;
     }
     // add broadcast peer
@@ -116,7 +116,7 @@ void Transmission::initTransmission()
     // Add peer
     if (esp_now_add_peer(&peerInfo) != ESP_OK)
     {
-        Serial.println("Failed to add peer");
+        Logger::log("Failed to add peer");
         return;
     }
 }
@@ -125,11 +125,11 @@ void Transmission::send(uint8_t address[], uint8_t *message, uint8_t len)
     esp_err_t result = esp_now_send(address, message, len);
     if (result == ESP_OK)
     {
-        // Serial.println("sended ok");
+        // Logger::log("sended ok");
     }
     else
     {
-        // Serial.println("Error sending the data");
+        // Logger::log("Error sending the data");
     }
     delay(3);
 }
@@ -165,7 +165,7 @@ void Transmission::sendOnce(MacAddress address, Request* request, bool strict) {
     auto requestBody = request->getRequestBody();
     bool registered = isPeerRegistered(address.data());
     if(!registered) {
-        Serial.println("register the new peer");
+        Logger::log("register the new peer");
         registerPeer(address.data());
     }
     send(address, request);

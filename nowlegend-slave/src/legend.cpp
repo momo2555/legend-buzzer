@@ -43,8 +43,8 @@ void Legend::run()
     com_->registerEchoPeer();
     com_->OnDataRecv<Legend>(this, &Legend::dataRecvCallback_);
     com_->OnDataSent([](const unsigned char * addr, esp_now_send_status_t status){
-        Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
-        Serial.println("frame sent");
+        Logger::log(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+        Logger::log("frame sent");
     });
     
     createSubProcess_();
@@ -57,7 +57,7 @@ bool Legend::isReady()
 
 void Legend::createSubProcess_()
 {
-    Serial.println("Create sub process");
+    Logger::log("Create sub process");
     if (!isSubprocessLaunched)
     {
         initAllTimers_();
@@ -76,7 +76,7 @@ void Legend::createSubProcess_()
 void Legend::dataRecvCallback_(const unsigned char *addr, const unsigned char *data, int size)
 {
 
-    Serial.println("receive data");
+    Logger::log("receive data");
     xSemaphoreTake( xSemaphore, portMAX_DELAY );
     auto receivedRequest = std::make_unique<Request>(Request(data, size));
     this->handlerManager_->handleRequest(receivedRequest.get());
@@ -92,7 +92,7 @@ void Legend::subProcess()
         // Send every second an echo
         if (echoTimer_->isElapsed(1000))
         {
-            Serial.println("before send echo frame");
+            Logger::log("before send echo frame");
             echoTimer_->timer();
             sendEchoFrame_();
         }
@@ -102,7 +102,7 @@ void Legend::subProcess()
         // Send identification frame
         if (identificationTimer_->isElapsed(2000))
         {
-            Serial.println("before send id frame");
+            Logger::log("before send id frame");
             identificationTimer_->timer();
             sendIdentificationFrame_();
         }
@@ -143,7 +143,7 @@ bool Legend::isMasterRegistered_()
 
 void Legend::sendIdentificationFrame_()
 {
-    Serial.println("send identification frame");
+    Logger::log("send identification frame");
     if (isMasterRegistered_() && stateMachine_->transmissionState == TransmissionState::IDENTIFICATION_STATE)
     {
         xSemaphoreTake( xSemaphore, portMAX_DELAY );
@@ -160,11 +160,11 @@ void Legend::sendIdentificationFrame_()
 }
 void Legend::sendEchoFrame_()
 {
-    Serial.println("send echo frame");
+    Logger::log("send echo frame");
     if (!isMasterRegistered_() && stateMachine_->transmissionState == TransmissionState::ECHO_STANDBY)
     {   
         xSemaphoreTake( xSemaphore, portMAX_DELAY );
-        Serial.println("send echo");
+        Logger::log("send echo");
         auto echoReq = std::make_unique<Request>(Request());
         echoReq->asEcho();
         MacAddress myAddress {Transmission::getMyAddress()};
@@ -178,7 +178,7 @@ void Legend::sendEchoFrame_()
     }
 }
 void Legend::sendAliveFrame_() {
-    Serial.println("send heartbeat frame");
+    Logger::log("send heartbeat frame");
     if (isMasterRegistered_() && stateMachine_->transmissionState == TransmissionState::READY_STATE)
     {
         xSemaphoreTake( xSemaphore, portMAX_DELAY );
@@ -188,7 +188,7 @@ void Legend::sendAliveFrame_() {
         MacAddress masterAddr = deviceManager_->getMaster().address;
         heartbeatReq->setSender(Entity::DEVICE, myAddress);
         heartbeatReq->setReceiver(Entity::MASTER, masterAddr);
-        Serial.println("before sending hertbeat");
+        Logger::log("before sending hertbeat");
         //com_->registerPeer(masterAddr.data());
         com_->send(masterAddr, heartbeatReq.get());
         xSemaphoreGive(xSemaphore);
@@ -201,7 +201,7 @@ void Legend::checkHeartbeat_()
         if(deviceManager_->containMaster()) {
             Device master = deviceManager_->getMaster();
             if (master.aliveTimer.isElapsed(3000)) {
-                Serial.println("Master watchdog triggered");
+                Logger::log("Master watchdog triggered");
                 stateMachine_->transmissionState = TransmissionState::ECHO_STANDBY;
                 stateMachine_->masterRegistered = false;
                 deviceManager_.reset();
@@ -222,10 +222,10 @@ void Legend::initAllTimers_()
 
 void legendTask(void *param)
 {
-    Serial.println("run legend loop");
+    Logger::log("run legend loop");
     while (true)
     {
-        //Serial.println("coucou you ");
+        //Logger::log("coucou you ");
         Legend *legend = (Legend *)param;
         legend->subProcess();
     }
