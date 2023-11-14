@@ -103,6 +103,7 @@ void WebsocketInterface::onClose(Client *c, ConnectionHandle hdl)
 
 void WebsocketInterface::onMessage(ConnectionHandle, Client::message_ptr msg)
 {
+    std::cout << "New message received by the websocket server" << std::endl;
     if (msg->get_opcode() == websocketpp::frame::opcode::text) {
         for(HookFunction hook : hooks) {
             hook(msg->get_payload());

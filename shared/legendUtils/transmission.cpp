@@ -12,19 +12,16 @@ void setReceiveCallback(ReceiveCallback cb)
 Transmission::Transmission()
 {
 }
+
 void Transmission::registerPeer(MacAddress address)
 {
-    registerPeer(address.data());
-}
-void Transmission::registerPeer(uint8_t address[])
-{
     // check if the address is in the peers list
-    if (!esp_now_is_peer_exist(address) && peerIndex < MAX_CONNECTION)
+    if (!esp_now_is_peer_exist(address.data()))
     {
         // Register peer
-        esp_now_peer_info_t peerInfo = {};
+        esp_now_peer_info_t peerInfo {};
         // peerInfo.ifidx=WIFI_IF_AP;
-        memcpy(peerInfo.peer_addr, address, 6);
+        memcpy(peerInfo.peer_addr, address.data(), 6);
         peerInfo.channel = 0;
         peerInfo.encrypt = false;
 
@@ -34,61 +31,34 @@ void Transmission::registerPeer(uint8_t address[])
             Logger::log("Failed to add peer");
             return;
         }
-        // add peer to the registered tab
-        memcpy(peerAdresses[peerIndex], address, 6);
-        peerIndex++;
     }
 }
 void Transmission::registerEchoPeer()
 {
-    uint8_t echoBroadAddr[6] ECHO_BROADCAST_ADDR;
+    MacAddress echoBroadAddr ECHO_BROADCAST_ADDR;
     registerPeer(echoBroadAddr);
 }
 void Transmission::deleteEchoPeer()
 {
-    uint8_t echoBroadAddr[6] ECHO_BROADCAST_ADDR;
+    MacAddress echoBroadAddr ECHO_BROADCAST_ADDR;
     deletePeer(echoBroadAddr);
-}
-void Transmission::deletePeer(uint8_t address[])
-{
-    uint8_t newPeerIndex = peerIndex;
-    for (uint8_t i = 0; i < newPeerIndex; i++)
-    {
-        // compare addresses
-        if (compareAddresses(peerAdresses[i], address))
-        {
-            // invert addresses in address tab
-            uint8_t last[6];
-            memcpy(last, peerAdresses[newPeerIndex - 1], 6);
-            memcpy(peerAdresses[newPeerIndex - 1], peerAdresses[i], 6);
-            memcpy(peerAdresses[i], last, 6);
-            newPeerIndex--;
-            // delete peer from peer list
-            esp_now_del_peer(address);
-        }
-    }
-    peerIndex = newPeerIndex;
 }
 void Transmission::deletePeer(MacAddress address)
 {
-    deletePeer(address.data());
+    if(esp_now_is_peer_exist(address.data())) {
+        esp_now_del_peer(address.data());
+    }
 }
+
 MacAddress Transmission::getMyAddress()
 {
     MacAddress addr {std::string(WiFi.macAddress().c_str())};
     return addr;
 }
-bool Transmission::isPeerRegistered(uint8_t address[])
+
+bool Transmission::isPeerRegistered(MacAddress address)
 {
-    bool exist = false;
-    for (uint8_t i = 0; i < peerIndex; i++)
-    {
-        if (compareAddresses(peerAdresses[i], address))
-        {
-            exist = true;
-        }
-    }
-    return exist;
+    return esp_now_del_peer(address.data());
 }
 void Transmission::initTransmission()
 {
@@ -101,24 +71,7 @@ void Transmission::initTransmission()
         Logger::log("Error initializing ESP-NOW");
         return;
     }
-    // add broadcast peer
-    // uint8_t broad0[6] = {0,0,0,0,0,0};
-    // registerPeer(broad0);
-
-    // add broadcast peer
-    esp_now_peer_info_t peerInfo = {};
-    // peerInfo.ifidx=WIFI_IF_AP;
-    uint8_t address[6] ECHO_BROADCAST_ADDR;
-    memcpy(peerInfo.peer_addr, address, 6);
-    peerInfo.channel = 0;
-    peerInfo.encrypt = false;
-
-    // Add peer
-    if (esp_now_add_peer(&peerInfo) != ESP_OK)
-    {
-        Logger::log("Failed to add peer");
-        return;
-    }
+    
 }
 void Transmission::send(uint8_t address[], uint8_t *message, uint8_t len)
 {
@@ -133,6 +86,7 @@ void Transmission::send(uint8_t address[], uint8_t *message, uint8_t len)
     }
     delay(3);
 }
+
 void Transmission::broadcastAll(uint8_t *message, uint8_t len)
 {
     uint8_t broad[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
@@ -141,12 +95,9 @@ void Transmission::broadcastAll(uint8_t *message, uint8_t len)
 
 void Transmission::sendAll(uint8_t *message, uint8_t len)
 {
-    for (uint8_t i = 0; i < peerIndex; i++)
-    {
-        send(peerAdresses[i], message, len);
-        delayMicroseconds(2500);
-    }
+        send(0, message, len);
 }
+
 void Transmission::send(MacAddress address, Request *request, SendMethod method)
 {
     auto requestBody = request->getRequestBody();
@@ -163,23 +114,17 @@ void Transmission::send(MacAddress address, Request *request, SendMethod method)
 }
 void Transmission::sendOnce(MacAddress address, Request* request, bool strict) {
     auto requestBody = request->getRequestBody();
-    bool registered = isPeerRegistered(address.data());
+    bool registered = isPeerRegistered(address);
     if(!registered) {
         Logger::log("register the new peer");
-        registerPeer(address.data());
+        registerPeer(address);
     }
     send(address, request);
     if(strict && registered) {
-        deletePeer(address.data());
+        deletePeer(address);
     }
     
 }
-/*
-void Transmission::sendModules(FieldTransmission modules){
-  //sendAll((uint8_t*)&modules, sizeof(modules));
-  broadcastAll((uint8_t*)&modules, sizeof(modules));
-  delayMicroseconds(500);
-}*/
 
 void Transmission::OnDataSent(void (*callBack)(const unsigned char *, esp_now_send_status_t))
 {

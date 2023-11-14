@@ -30,12 +30,10 @@
         using ptr = std::shared_ptr<Transmission>;
           Transmission();
           void initTransmission();
-          void registerPeer(uint8_t address[]);
-          void registerEchoPeer();
-          void deleteEchoPeer();
-          void deletePeer(uint8_t address[]);
           void registerPeer(MacAddress address);
           void deletePeer(MacAddress address);
+          void registerEchoPeer();
+          void deleteEchoPeer();
           void OnDataSent(void (*callBack)(const unsigned char*, esp_now_send_status_t));
           template<class A>
           void OnDataRecv(A* class_ptr, void (A::* callBack)(const unsigned char*, const unsigned char*, int)) {
@@ -57,27 +55,13 @@
           
 
           void broadcastAll(uint8_t* message, uint8_t len);
-
-          bool isNewMessage() {return newMessage;};
-          uint8_t getPeerInex() {return peerIndex;};
-          //std::string getMyAddress(){return myStrAddress;};
           static MacAddress getMyAddress();
-          bool isPeerRegistered(uint8_t address[]);
+          bool isPeerRegistered(MacAddress address);
           
           
       private:
           MacAddress myAddress;
-          std::string myStrAddress;
-          bool newMessage;
-          //you cann add only 4 peers
-          uint8_t peerAdresses[MAX_CONNECTION][6];
-          
-          
-
-          uint8_t peerIndex = 0;
-          
-          
-          
+        
   };
 
 

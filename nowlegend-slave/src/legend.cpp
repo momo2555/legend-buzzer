@@ -153,7 +153,7 @@ void Legend::sendIdentificationFrame_()
         MacAddress masterAddr = deviceManager_->getMaster().address;
         identifyReq->setSender(Entity::DEVICE, myAddress);
         identifyReq->setReceiver(Entity::MASTER, masterAddr);
-        com_->registerPeer(masterAddr.data());
+        com_->registerPeer(masterAddr);
         com_->send(masterAddr, identifyReq.get());
         xSemaphoreGive(xSemaphore);
     }
