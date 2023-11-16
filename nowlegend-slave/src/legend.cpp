@@ -131,7 +131,7 @@ void Legend::sendRequest(Request request, Entity receiver)
         MacAddress masterAddr {deviceManager_->getMaster().address};
         request.setReceiver(receiver, masterAddr);
         request.setSender(Entity::DEVICE, myAddress);
-        com_->sendOnce(masterAddr, &request, true);
+        com_->sendOnce(masterAddr, &request, false);
         xSemaphoreGive(xSemaphore);
     }
 }

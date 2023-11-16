@@ -82,7 +82,7 @@ void Transmission::send(uint8_t address[], uint8_t *message, uint8_t len)
     }
     else
     {
-        // Logger::log("Error sending the data");
+        Logger::log("Error sending the data");
     }
     delay(3);
 }
@@ -114,13 +114,11 @@ void Transmission::send(MacAddress address, Request *request, SendMethod method)
 }
 void Transmission::sendOnce(MacAddress address, Request* request, bool strict) {
     auto requestBody = request->getRequestBody();
-    bool registered = isPeerRegistered(address);
-    if(!registered) {
-        Logger::log("register the new peer");
-        registerPeer(address);
-    }
+    Logger::log("register the new peer");
+    registerPeer(address);
     send(address, request);
-    if(strict && registered) {
+    delay(5);
+    if(strict) {
         deletePeer(address);
     }
     

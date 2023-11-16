@@ -34,7 +34,7 @@ void LegendMaster::setup()
         if(device.aliveTimer.isElapsed(3000) && device.state == ConnectionState::CONNECTED) {
             this->deviceManager_->disconnectDevice(device.address);
             Logger::log("Device disconnected mac = " + 
-                            String(device.address.toString().c_str()));
+                            device.address.toString());
         }
     }
 

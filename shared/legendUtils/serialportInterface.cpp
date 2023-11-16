@@ -12,5 +12,5 @@ Request SerialportInterface::readRequest() {
     return request;
 }
 void SerialportInterface::writeRequest(Request *request) {
-    Logger::log(std::string("R") + request->toString());
+    Serial.println("R" + String(request->toString().c_str()));
 }
