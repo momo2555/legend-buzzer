@@ -1,5 +1,4 @@
 import logging
-import asyncio
 
 from websockets.client import connect
 

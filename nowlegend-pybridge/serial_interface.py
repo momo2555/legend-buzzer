@@ -18,10 +18,7 @@ class SerialInterface:
         self.__queue = asyncio.Queue()
         self.__loop = asyncio.get_event_loop()
     
-    def set_receive_callback(self, callback):
-        self.__receive_data_callback = callback
-
-    def read_thread(self):
+    def __read_thread(self):
         self.__logger.info("Start serial reading thread")
         while True:
             try:
@@ -33,8 +30,11 @@ class SerialInterface:
             except Exception as e:
                 self.__logger.warning(f"Error reading serial : {e}")
     
+    def set_receive_callback(self, callback):
+        self.__receive_data_callback = callback
+
     async def read_serial(self):
-        read_thread = threading.Thread(target=self.read_thread)
+        read_thread = threading.Thread(target=self.__read_thread)
         read_thread.daemon = True
         read_thread.start()
 
