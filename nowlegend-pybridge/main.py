@@ -24,15 +24,11 @@ def _init_logger():
 async def _serial_receive_callback(json_data):
     global websocket_itf
     await websocket_itf.write_websocket(json.dumps(json_data))
-    logger = logging.getLogger("pybridge")
-    logger.debug(json_data)
 
 async def _websocket_receive_callback(data : str):
     global serial_itf
     data = "R" + data
     await serial_itf.write_data(data.encode())
-    logger = logging.getLogger("pybridge")
-    logger.debug(data)
 
 async def main():
     global serial_itf
@@ -49,7 +45,7 @@ async def main():
     websocket_itf.set_receive_callback(_websocket_receive_callback)
     await websocket_itf.connect()
     
-    await asyncio.gather(websocket_itf.read_websocket(), websocket_itf.test(), serial_itf.read_serial())
+    await asyncio.gather(websocket_itf.read_websocket(), serial_itf.read_serial())
 
 if __name__ == "__main__":
     asyncio.run(main())

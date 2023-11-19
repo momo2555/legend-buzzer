@@ -21,16 +21,10 @@ class WebsocketInterface:
         self.__logger.info("Start websocket reading coroutine")
         while 1:
             data = await self.__server.recv()
-            print(data)
-            #await self.__receive_message_callback(data)
+            await self.__receive_message_callback(data)
 
     async def write_websocket(self, data : str):
         await self.__server.send(data)
-
-    async def test(self):
-        while 1:
-            await self.__server.send("TEST MICRO !!")
-            await asyncio.sleep(1)
 
     def set_receive_callback(self, callback):
         self.__receive_message_callback = callback
