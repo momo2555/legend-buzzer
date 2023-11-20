@@ -27,7 +27,7 @@ async def _serial_receive_callback(json_data):
 
 async def _websocket_receive_callback(data : str):
     global serial_itf
-    data = "R" + data
+    data = "R" + data + "\n"
     await serial_itf.write_data(data.encode())
 
 async def main():

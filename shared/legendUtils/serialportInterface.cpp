@@ -8,7 +8,7 @@ void SerialportInterface::init() {
 }  
 Request SerialportInterface::readRequest() {
     int size = Serial.readBytesUntil('\n', buffer_, MAX_READ_BYTES);
-    Request request((const unsigned char *)buffer_, size);
+    Request request {std::string(buffer_)};
     return request;
 }
 void SerialportInterface::writeRequest(Request *request) {

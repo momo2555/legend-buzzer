@@ -47,8 +47,19 @@ void loop() {
   if (legend->isReady()) {
     delay(5000);
     // create a new request
+    Logger::log("FRAME 1 ---");
     Request request {};
-    request.asEvent("coucou");
+    request.asData();
+    request.setData<int>("test", 45);
+    request.setData<float>("test2", 45.5);
+    request.setData<bool>("test3", false);
+    request.setReceiver(Entity::MONITOR, {});
+    request.setSender(Entity::DEVICE, MacAddress("AD:AD:AD:AD:AD:AD"));
+    Logger::log(request.toString());
+
+    Logger::log("FRAME 2 ---");
+    //Request request {std::string("\"header\"")};
+    
     legend->sendRequest(request, Entity::MONITOR);
     Logger::log("I'm ready - send event");
     

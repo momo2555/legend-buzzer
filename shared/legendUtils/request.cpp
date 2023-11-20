@@ -10,6 +10,11 @@ Request::Request(const unsigned char *rawData, int size)
     memmove(&requestBody_, rawData, sizeof(requestBody_));
     globalIndex_ = requestBody_.header.dataLength;
 }
+
+Request::Request(std::string jsonRequest) {
+    fromString(jsonRequest);
+}
+
 void Request::setReceiver(Entity receiver, MacAddress receiverAddress)
 {
     requestBody_.header.to = receiver;
@@ -121,13 +126,16 @@ std::string Request::toString()
             switch (requestBody_.data[i].type)
             {
             case RequestDataType::INT:
-                doc["data"][requestBody_.data[i].name] = std::get<int>(requestBody_.data[i].value);
+                doc["data"][i][requestBody_.data[i].name] = std::get<int>(requestBody_.data[i].value);
+                doc["data"][i]["type"] = "int";
                 break;
             case RequestDataType::FLOAT:
-                doc["data"][requestBody_.data[i].name] = std::get<float>(requestBody_.data[i].value);
+                doc["data"][i][requestBody_.data[i].name] = std::get<float>(requestBody_.data[i].value);
+                doc["data"][i]["type"] = "float";
                 break;
             case RequestDataType::BOOL:
-                doc["data"][requestBody_.data[i].name] = std::get<bool>(requestBody_.data[i].value);
+                doc["data"][i][requestBody_.data[i].name] = std::get<bool>(requestBody_.data[i].value);
+                doc["data"][i]["type"] = "bool";
                 break;
             }
             // std::visit([doc, it](auto&& elem){doc["data"][it->first] = elem; }, it->second.value);
@@ -146,8 +154,10 @@ void Request::fromString(std::string jsonData)
     requestBody_.header.to = toEntity_(doc["header"]["to"]);
     requestBody_.header.type = toType_(doc["header"]["type"]);
     
-    requestBody_.header.senderAddress = doc["header"]["from_addr"].as<std::string>();
-    requestBody_.header.receiverAddress = doc["header"]["to_addr"].as<std::string>();
+    if (doc["header"].containsKey("from_addr"))
+        requestBody_.header.senderAddress = doc["header"]["from_addr"].as<std::string>();
+    if (doc["header"].containsKey("to_addr"))
+        requestBody_.header.receiverAddress = doc["header"]["to_addr"].as<std::string>();
     
     if (requestBody_.header.type == RequestType::DEVICE_EVENT)
     {
@@ -157,6 +167,25 @@ void Request::fromString(std::string jsonData)
     else if (requestBody_.header.type == RequestType::DEVICE_DATA || 
              requestBody_.header.type == RequestType::CONFIRM_IDENTITY)
     {
+        ArduinoJson::JsonArray data = doc["data"];
+        globalIndex_ = 0;
+        for(ArduinoJson::JsonObject obj : data) {
+            if (globalIndex_ < MAX_DATA_REQUEST_LENGTH) {
+                for(ArduinoJson::JsonPair keyValue : obj) {
+                    if (keyValue.key() != "type") {
+                        if (obj["type"] == "int") {
+                            setData<int>(std::string(keyValue.key().c_str()), keyValue.value().as<int>());
+                        } else if (obj["type"] == "float") {
+                            setData<float>(std::string(keyValue.key().c_str()), keyValue.value().as<float>());
+                        } else if (obj["type"] == "bool") {
+                            setData<bool>(std::string(keyValue.key().c_str()), keyValue.value().as<bool>());
+                        }
+                    }
+                }
+                
+                globalIndex_++;
+            }
+        }
 
     }
 

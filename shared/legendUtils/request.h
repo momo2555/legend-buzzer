@@ -88,6 +88,7 @@ class Request
 public:
     Request();
     Request(const unsigned char *rawData, int size);
+    Request(std::string jsonRequest);
     ~Request(){};
     void setReceiver(Entity receiver, MacAddress receiverAddress);
     void setSender(Entity sender, MacAddress senderAddress);

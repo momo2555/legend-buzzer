@@ -31,11 +31,16 @@ void LegendMaster::setup()
 {
     // check heartbeat of all connected devices
     for(Device device : this->deviceManager_->getAll()) {
+        // check if heartbeat received from each esp
         if(device.aliveTimer.isElapsed(3000) && device.state == ConnectionState::CONNECTED) {
             this->deviceManager_->disconnectDevice(device.address);
             Logger::log("Device disconnected mac = " + 
                             device.address.toString());
         }
+
+        // check if a message received rfrom bridge
+        
+
     }
 
 }
