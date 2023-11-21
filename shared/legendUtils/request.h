@@ -51,7 +51,8 @@ enum class RequestDataType : std::uint8_t
     INT = 0,
     FLOAT,
     BOOL,
-    STRING
+    STRING,
+    EMPTY,
 };
 struct RequestHeader
 {
@@ -166,6 +167,7 @@ public:
     MacAddress getSenderAddress();
     char *getDeviceName();
     RequestData getDataAt(uint8_t index);
+    RequestData getData(char * name);
     //MacAddress getMacAddress(){return requestBody_.header.mac;};
 
 private:

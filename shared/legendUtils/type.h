@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <algorithm>
 #include <iomanip>
+#include "logger.h"
 
 #define STR_MAC_LEN 
 
@@ -16,19 +17,7 @@ class MacAddress {
 public:
     MacAddress() : mac_ {0,0,0,0,0,0} {}
     MacAddress(std::string mac) {
-        std::uint8_t i = 0, j = 0, value = 0;
-        for(char s: mac) {
-            if(s!=':') {
-                value+=(s>='A'?(s - 'A' + 10):(s - '0'))*(1 + 15*(!i));
-                i++;
-                if (i==2) {
-                    mac_[j] = value;
-                    value = 0;
-                    i = 0;
-                    j++;
-                }
-            }
-        }
+        fromString(mac);
     }
     MacAddress(BasicMacAddress& mac) : mac_ {mac} {}
     MacAddress(std::initializer_list<std::uint8_t> mac) : mac_ {0,0,0,0,0,0}  {
@@ -52,9 +41,11 @@ public:
     }
     
     MacAddress operator=(BasicMacAddress mac) {
+        mac_  = mac;
         return MacAddress(mac);
     }
     MacAddress operator=(std::string mac) {
+        fromString(mac);
         return MacAddress(mac);
     }
     MacAddress operator=(std::initializer_list<std::uint8_t> mac) {
@@ -65,6 +56,21 @@ public:
     }
     constexpr std::uint8_t* data() {
         return mac_.data();
+    }
+    void fromString (std::string mac) {
+        std::uint8_t i = 0, j = 0, value = 0;
+        for(char s: mac) {
+            if(s!=':') {
+                value+=(s>='A'?(s - 'A' + 10):(s - '0'))*(1 + 15*(!i));
+                i++;
+                if (i==2) {
+                    mac_[j] = value;
+                    value = 0;
+                    i = 0;
+                    j++;
+                }
+            }
+        }
     }
 private:
     std::string intToHexStr(std::uint8_t value) {

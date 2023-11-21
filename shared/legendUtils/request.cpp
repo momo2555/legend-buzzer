@@ -4,6 +4,7 @@ Request::Request() : globalIndex_(0)
 {
     // empty request
 }
+
 Request::Request(const unsigned char *rawData, int size)
 {
     //requestBody_ = *( (*RequestBody<MAX_DATA_REQUEST_LENGTH>) rawData);
@@ -20,22 +21,18 @@ void Request::setReceiver(Entity receiver, MacAddress receiverAddress)
     requestBody_.header.to = receiver;
     requestBody_.header.receiverAddress = receiverAddress;
 }
+
 void Request::setSender(Entity sender, MacAddress senderAddress)
 {
     requestBody_.header.from = sender;
     requestBody_.header.senderAddress = senderAddress;
 }
+
 void Request::setDeviceName(const char *name)
 {
     strncpy(requestBody_.header.device, name, STR_DEVICE_LEN);
     // header_.device = name;
 }
-
-
-// void Request::setMacAddress(std::array<uint8_t, STR_MAC_LEN> macAddress)
-// {
-//     requestBody_.header.mac = macAddress;
-// }
 
 /*
     A request of type event
@@ -71,7 +68,7 @@ void Request::asIdentificationResponse(IdentificationResult result)
 IdentificationResult Request::getIdentifactionResult()
 {
     if(getType() == RequestType::CONFIRM_IDENTITY) {
-        int res = std::get<int>(getDataAt(0).value); 
+        int res = std::get<int>(getData("res").value); 
         return static_cast<IdentificationResult>(res);
         
     }
@@ -154,21 +151,24 @@ void Request::fromString(std::string jsonData)
     requestBody_.header.to = toEntity_(doc["header"]["to"]);
     requestBody_.header.type = toType_(doc["header"]["type"]);
     
-    if (doc["header"].containsKey("from_addr"))
+    // Addresses are not compulsory
+    if (doc["header"].containsKey("from_addr")) {
         requestBody_.header.senderAddress = doc["header"]["from_addr"].as<std::string>();
-    if (doc["header"].containsKey("to_addr"))
+    }
+    if (doc["header"].containsKey("to_addr")) {
         requestBody_.header.receiverAddress = doc["header"]["to_addr"].as<std::string>();
+    }
     
+    // event request
     if (requestBody_.header.type == RequestType::DEVICE_EVENT)
     {
-        
         strncpy(requestBody_.event, doc["event"].as<const char *>(), STR_EVENT_LEN);
     }
+    // data request
     else if (requestBody_.header.type == RequestType::DEVICE_DATA || 
              requestBody_.header.type == RequestType::CONFIRM_IDENTITY)
     {
         ArduinoJson::JsonArray data = doc["data"];
-        globalIndex_ = 0;
         for(ArduinoJson::JsonObject obj : data) {
             if (globalIndex_ < MAX_DATA_REQUEST_LENGTH) {
                 for(ArduinoJson::JsonPair keyValue : obj) {
@@ -182,14 +182,10 @@ void Request::fromString(std::string jsonData)
                         }
                     }
                 }
-                
-                globalIndex_++;
             }
         }
 
     }
-
-
 }
 
 std::string Request::entityToString_(Entity entity)
@@ -215,6 +211,7 @@ std::string Request::entityToString_(Entity entity)
     }
     return device;
 }
+
 std::string Request::typeToString_(RequestType type)
 {
     std::string typeString{""};
@@ -232,7 +229,6 @@ std::string Request::typeToString_(RequestType type)
     case RequestType::CONFIRM_IDENTITY:
         typeString = "confirm_identity";
         break;
-    
     }
     return typeString;
 }
@@ -278,10 +274,12 @@ RequestType Request::getType()
 {
     return requestBody_.header.type;
 }
+
 Entity Request::getReceiverType()
 {
     return requestBody_.header.to;
 }
+
 Entity Request::getSenderType()
 {
     return requestBody_.header.from;
@@ -290,6 +288,7 @@ Entity Request::getSenderType()
 MacAddress Request::getReceiverAddress() {
     return requestBody_.header.receiverAddress;
 }
+
 MacAddress Request::getSenderAddress() {
     return requestBody_.header.senderAddress;
 }
@@ -297,12 +296,30 @@ MacAddress Request::getSenderAddress() {
 char *Request::getDeviceName()
 {
 }
+
 RequestData Request::getDataAt(uint8_t index)
 {
     RequestData requestData{};
-    if (index < globalIndex_ && getType() == RequestType::DEVICE_DATA)
+    requestData.type = RequestDataType::EMPTY;
+    auto reqType = getType();
+    if (index < globalIndex_ && (reqType == RequestType::DEVICE_DATA || reqType == RequestType::CONFIRM_IDENTITY))
     {
         requestData = requestBody_.data[index];
+    }
+    return requestData;
+}
+
+RequestData Request::getData(char * name) {
+    RequestData requestData{};
+    requestData.type = RequestDataType::EMPTY;
+    auto reqType = getType();
+    uint8_t index = 0;
+    while (index < globalIndex_ && (reqType == RequestType::DEVICE_DATA || reqType == RequestType::CONFIRM_IDENTITY))
+    {
+        if (strcmp(getDataAt(index).name, name)==0) {
+            requestData = getDataAt(index);
+        }
+        index++;
     }
     return requestData;
 }
