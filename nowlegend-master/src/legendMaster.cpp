@@ -39,7 +39,19 @@ void LegendMaster::setup()
         }
 
         // check if a message received rfrom bridge
-        
+        Request request = serial_->readRequest();
+        if (!request.isEmpty()) {
+            // route the request to the right device
+            Logger::log("RECEIVE IDENTIFICATION CONFIRM FROM MASTER SERVER");
+            MacAddress deviceAddr = request.getReceiverAddress();
+            if(this->deviceManager_->isDeviceExist(deviceAddr)) {
+                Device device = this->deviceManager_->getDevice(deviceAddr);
+                device.state = ConnectionState::CONNECTED;
+                device.aliveTimer.timer();
+                this->deviceManager_->updateDevice(deviceAddr, device);
+            }
+            router_->route(&request, {});
+        }
 
     }
 

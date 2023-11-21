@@ -45,6 +45,7 @@ enum class RequestType : std::uint8_t
     CONFIRM_IDENTITY, // confirm the identification
     HEARTBEAT,        // Say to master that the device is alive to not trigger the watchdog
     HEARTBEAT_RESPONSE, // the server repond back to confirm that he is alived to
+    EMPTY,
 };
 enum class RequestDataType : std::uint8_t
 {
@@ -168,6 +169,7 @@ public:
     char *getDeviceName();
     RequestData getDataAt(uint8_t index);
     RequestData getData(char * name);
+    bool isEmpty();
     //MacAddress getMacAddress(){return requestBody_.header.mac;};
 
 private:

@@ -3,6 +3,7 @@
 Request::Request() : globalIndex_(0)
 {
     // empty request
+    requestBody_.header.type = RequestType::EMPTY;
 }
 
 Request::Request(const unsigned char *rawData, int size)
@@ -322,4 +323,7 @@ RequestData Request::getData(char * name) {
         index++;
     }
     return requestData;
+}
+bool Request::isEmpty() {
+    return getType() == RequestType::EMPTY;
 }
