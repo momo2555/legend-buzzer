@@ -23,6 +23,7 @@ class SerialInterface:
         while True:
             try:
                 data = self.__serial.read_until(b"\n").decode()
+                print(data)
                 if len(data) > 0 and data[0] == "R":
                     data = data[1:]
                     json_data = json.loads(data)

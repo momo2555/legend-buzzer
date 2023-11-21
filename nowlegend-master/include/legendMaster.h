@@ -9,6 +9,7 @@
 #include "handlers/identificationHandler.h"
 #include "handlers/messageHandler.h"
 #include "handlers/heartbeatHandler.h"
+#include "handlers/identificationResponseHandler.h"
 
 class LegendMaster
 {

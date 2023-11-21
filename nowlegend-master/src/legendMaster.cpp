@@ -15,11 +15,13 @@ LegendMaster::LegendMaster() {
     auto messageHandler = new MessageHandler(router_, deviceManager_);
     auto identificationHandler = new IdentificationHandler(router_, deviceManager_);
     auto heartbeatHandler = new HeartbeatHandler(router_, deviceManager_);
+    auto identificationResponseHandler = new IdentificationResponseHandler(router_, deviceManager_);
 
     handlerManager_->addHandler(echoHandler);
     handlerManager_->addHandler(messageHandler);
     handlerManager_->addHandler(identificationHandler);
     handlerManager_->addHandler(heartbeatHandler);
+    handlerManager_->addHandler(identificationHandler);
 
 }
 
@@ -43,14 +45,7 @@ void LegendMaster::setup()
         if (!request.isEmpty()) {
             // route the request to the right device
             Logger::log("RECEIVE IDENTIFICATION CONFIRM FROM MASTER SERVER");
-            MacAddress deviceAddr = request.getReceiverAddress();
-            if(this->deviceManager_->isDeviceExist(deviceAddr)) {
-                Device device = this->deviceManager_->getDevice(deviceAddr);
-                device.state = ConnectionState::CONNECTED;
-                device.aliveTimer.timer();
-                this->deviceManager_->updateDevice(deviceAddr, device);
-            }
-            router_->route(&request, {});
+            this->handlerManager_->handleRequest(&request);
         }
 
     }
