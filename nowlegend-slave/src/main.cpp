@@ -106,7 +106,9 @@ void loop() {
       if(!b1) {
         Serial.println("Button blue pressed");
         //send the request button pressed
-
+        Request request {};
+        request.asEvent("blue");
+        legend->sendRequest(request, Entity::CONTROLLER);
       }
       b1 = true;
     }
