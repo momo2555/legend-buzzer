@@ -8,7 +8,7 @@ MessageHandler::MessageHandler(std::shared_ptr<Router> router, std::shared_ptr<D
 
 void MessageHandler::handle(Request *request)
 {
-
+    router_->route(request, {});
 }
 
 bool MessageHandler::canHandle(Request *request)
