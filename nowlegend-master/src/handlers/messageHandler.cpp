@@ -8,6 +8,7 @@ MessageHandler::MessageHandler(std::shared_ptr<Router> router, std::shared_ptr<D
 
 void MessageHandler::handle(Request *request)
 {
+    Logger::log("Receive message handler");
     router_->route(request, {});
 }
 
