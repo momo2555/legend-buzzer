@@ -59,9 +59,11 @@ void loop() {
 #define L3_YELLOW 5
 #define L4_GREEN 17
 
-bool i1 = false;
-bool b1 = false;
-int p1 = false;
+bool ledState[4] {false, false, false, false};
+bool buttonPressed[4] {false, false, false, false};
+uint8_t pressCounter[4] {0, 0, 0, 0};
+int buttonPin[4] {K1_BLUE, K2_RED, K3_YELLOW, K4_GREEN};
+std::string colorNames[4] {"blue", "red", "yellow", "green"};
 
 void setup() {
   // INIT legend 
@@ -95,22 +97,26 @@ void loop() {
     }
     i1 = !i1;
     delay(1000);*/
-    if (digitalRead(K1_BLUE)==HIGH) {
-      p1++;
-    }else {
-      p1=0;
-      b1=false;
-    }
-    if(p1>3) {
-      
-      if(!b1) {
-        Serial.println("Button blue pressed");
-        //send the request button pressed
-        Request request {};
-        request.asEvent("blue");
-        legend->sendRequest(request, Entity::CONTROLLER);
+    for(uint8_t i = 0;i<4;i++) {
+      if (digitalRead(buttonPin[i])==HIGH) {
+        pressCounter[i]++;
+      }else {
+        pressCounter[i]=0;
+        buttonPressed[i]=false;
       }
-      b1 = true;
+      if(pressCounter[i]>3) {
+        
+        if(!buttonPressed[i]) {
+          Serial.print("Button ");
+          Serial.print(colorNames[i].c_str());
+          Serial.println(" pressed");
+          //send the request button pressed
+          Request request {};
+          request.asEvent(colorNames[i].c_str());
+          legend->sendRequest(request, Entity::CONTROLLER);
+        }
+        buttonPressed[i] = true;
+      }
     }
     /*if(==HIGH) {
       Serial.println("bouton bleu appuyé");
